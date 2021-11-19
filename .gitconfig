@@ -1,0 +1,25 @@
+[alias]
+    bl = blame
+    br = branch
+    ci = commit
+    co = checkout
+    cp = cherry-pick
+    fe = fetch
+    lg = log --stat
+    rb = pull --rebase 
+    st = status
+    sh = show
+    patch = format-patch
+
+[user]
+	name = Yong Wang
+	email = wangyong@ymatrix.cn
+
+[push]
+	default = simple
+
+[url "git://"]
+	insteadOf = https://
+
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/

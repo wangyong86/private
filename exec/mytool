@@ -1,0 +1,98 @@
+#!/bin/bash
+#set -x
+shopt -s expand_aliases
+
+function help()
+{
+    echo " mytool help:"
+    echo "          -i: build cscope index"
+    echo "          -d: make demo cluster"
+    echo "          -c: configure matrixdb/greenplum db"
+    echo "          -s: import greenplum and demo cluster config"
+    echo "          -l: reconstruct demo cluster lighweight"
+    echo "          -w: reconstruct demo cluster heavily, include rebuild cluster"
+}
+
+if [ $# -eq 0 ]; then
+    echo " must has parameter"
+    help;
+    exit -1
+fi
+
+source ~/.bash_profile
+#echo $1
+if [ "$1" == "-i" ]; then
+    cd $GPSRC
+	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.hpp" >cscope.files
+    cscope -Rbkq -i cscope.files
+    echo "build cscope index finished, file is located at current directory"
+    cd -
+fi 
+
+#create demo-cluster simple
+if [ "$1" == "-d" ]; then
+    cd $GPSRC
+    #PGOPTIONS='-c gp_vmem_idle_resource_timeout=0' make create-demo-cluster PORT_BASE=15658; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
+    PGOPTIONS='-c gp_vmem_idle_resource_timeout=0' make create-demo-cluster NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false PORT_BASE=25658; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
+    #PGOPTIONS='-c gp_vmem_idle_resource_timeout=0' make create-demo-cluster PORT_BASE=5658; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
+    #make create-demo-cluster PORT_BASE=5658 NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
+    cd -
+fi
+
+#backup config file
+if [ "$1" == "-b" ]; then
+	TOOLDIR=private/exec/
+	CONFIG_PATH=$TOOLDIR/config
+	cd && cp -r .gdbinit .gitconfig .vim .vimrc .screenrc .tmux.conf .bash_profile $CONFIG_PATH/ && tar cvzf toolset.tgz $TOOLDIR && cd - 1>/dev/null
+fi
+
+#full refresh system-weight refresh 
+if [ "$1" == "-w" ]; then
+	parallel=72
+	host=`hostname`
+	if [ $host == "wydev" ]; then
+		parallel=8
+	fi
+	code && make distclean && mytool -c && make -sj$parallel && mkmars && code && make -j8 install && gpstop -raqi
+fi
+
+if [ "$1" == "-l" ]; then
+	parallel=72
+	host=`hostname`
+	if [ $host == "wydev" ]; then
+		parallel=8
+	fi
+	code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -raqi
+fi
+
+if [ "$1" == "-w" ]; then
+	parallel=72
+	host=`hostname`
+	if [ $host == "wydev" ]; then
+		parallel=8
+	fi
+	code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qa && mytool -d 
+	#code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qa && mytool -d 
+fi
+
+#OLDGPHOME=/home/wy/gpdb
+OLDGPHOME=/home/wy/gpdb64
+if [ "$1" == "-c" ]; then
+    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
+    echo "config matrixdb finished"
+fi
+
+#install check
+if [ "$1" == "-t" ]; then
+	code
+    #PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off' make installcheck -C $RTPATH 
+    #PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off -c enable_partitionwise_join=off -c enable_partitionwise_aggregate=off -c gp_enable_global_deadlock_detector=off' make installcheck -C $RTPATH 
+    PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off -c enable_partitionwise_join=off -c enable_partitionwise_aggregate=off' make installcheck -C $RTPATH 
+    cd -
+fi
+
+if [ "$1" == "-m" ]; then
+	code
+    PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off' make installcheck -C $MPATH 
+    cd -
+fi
