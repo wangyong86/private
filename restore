@@ -1,0 +1,22 @@
+#!/bin/bash
+
+targetpath=~/
+function restore_deep()
+{
+	restore_shallow
+}
+
+function restore_shallow()
+{
+	cp .gitconfig $targetpath
+	cp .gdbinit $targetpath	
+	cp .vimrc $targetpath	
+	cp .screenrc $targetpath	
+	cp .tmux.conf $targetpath	
+	cp .bash_profile $targetpath
+}
+
+if [ $# = 0 ]; then
+	restore_shallow
+	exit 0
+fi

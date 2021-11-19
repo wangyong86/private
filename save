@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#project dir, the minimum dependency
+function save_all()
+{
+	cp $srcpath/.gitconfig .
+	cp $srcpath/.gdbinit .
+	cp $srcpath/.bash_profile .
+	cp $srcpath/.screenrc .
+	cp $srcpath/.vimrc .
+	cp $srcpath/.tmux.conf .
+}
+
+srcpath=~/
+save_all
