@@ -50,8 +50,8 @@ export PATH=$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/bin:$HOME/private/exec/
 #tool modify
 alias tmux="tmux -u"
 alias gti="git"
-alias vim="/usr/local/bin/vim -O"
-alias vi="/usr/local/bin/vim -O"
+alias vim="/usr/bin/vim -O"
+alias vi="vim"
 alias vt="vi ~/private/exec/mytool"
 alias gdb="gdb -q"
 alias srb="source ~/.bash_profile"
