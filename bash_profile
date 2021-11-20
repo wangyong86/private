@@ -8,9 +8,19 @@ if [ -f /opt/rh/devtoolset-7/enable ]; then
     . /opt/rh/devtoolset-7/enable
 fi
 
-#export GPHOME=/home/wy/gpdb
-export GPSRC=~/matrixdb
-export GPHOME=/home/wy/temp/usr/local/matrixdb-4.3.0.community
+# host relate config
+# mac book
+if [ "$HOSTNAME" = wydev ]; then 
+	export GPHOME=/home/wy/gpdb
+	export GPSRC=~/matrixdb
+	export GIT=/home/wy/git-2.12.4
+#server
+else 
+	export GPHOME=/home/wy/gpdb
+	export GPSRC=~/matrixdb
+fi
+
+#export GPHOME=/home/wy/temp/usr/local/matrixdb-4.3.0.community
 #export GPHOME=/home/wy/gpdb64
 #export GPSRC=~/64matrixdb
 
@@ -35,7 +45,6 @@ export LC_ALL=en_US.UTF-8
 export CLICKSRC=~/ClickHouse
 export GPDEMO=$GPSRC/gpAux/gpdemo/
 export LLVM=/home/wy/llvm-project
-export GIT=/home/wy/git-2.12.4
 export DD=$GPDEMO/datadirs
 export RTPATH=$GPSRC/src/test/regress
 export MPATH=$GPSRC/contrib/mars

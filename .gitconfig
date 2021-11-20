@@ -1,4 +1,5 @@
 [alias]
+    ad = add
     bl = blame
     br = branch
     ci = commit
