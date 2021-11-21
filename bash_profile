@@ -8,6 +8,7 @@ if [ -f /opt/rh/devtoolset-7/enable ]; then
     . /opt/rh/devtoolset-7/enable
 fi
 
+<<<<<<< HEAD
 # host relate config
 # mac book
 if [ "$HOSTNAME" = wydev ]; then 
@@ -16,7 +17,7 @@ if [ "$HOSTNAME" = wydev ]; then
 	export GIT=/home/wy/git-2.12.4
 #server
 else 
-	export GPHOME=/home/wy/gpdb
+	export GPHOME=/data1/wy64/gpdb64
 	export GPSRC=~/matrixdb
 fi
 
@@ -70,6 +71,7 @@ alias gpdb="cd $GPHOME/bin/"
 alias dd="cd $DD"
 alias ctest="cd ~/private/test"
 alias pr="cd ~/private"
+alias fast="cd ~/libsuperfast"
 alias ppi="pp -i"
 alias ppd="pp -d"
 
