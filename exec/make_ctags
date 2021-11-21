@@ -56,6 +56,10 @@ do	[ "$DIR" != "." ] && ln -f -s `echo "$DIR" | sed 's;/[^/]*;/..;g'`/tags "$DIR
 done
 
 #my complement
-cd gpAux/gpdemo
-find -name tags|xargs -I{} rm {}
-cd -
+if [ $# != 0 ];then
+	if [ "$1" = "-m" ];then # for matrixdb, removing ctags in datadir
+		cd gpAux/gpdemo
+		find -name tags|xargs -I{} rm {}
+		cd -
+	fi
+fi
