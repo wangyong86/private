@@ -8,7 +8,6 @@ if [ -f /opt/rh/devtoolset-7/enable ]; then
     . /opt/rh/devtoolset-7/enable
 fi
 
-<<<<<<< HEAD
 # host relate config
 # mac book
 if [ "$HOSTNAME" = wydev ]; then 
@@ -50,6 +49,7 @@ export DD=$GPDEMO/datadirs
 export RTPATH=$GPSRC/src/test/regress
 export MPATH=$GPSRC/contrib/mars
 export TSBS=/home/wy/tsbs
+export FAST=/home/wy/superfast
 
 export PATH=$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
@@ -77,6 +77,7 @@ alias ppd="pp -d"
 
 #source coce path
 alias code="cd $GPSRC"
+alias fast="cd $FAST"
 alias plan="cd $GPSRC/src/backend/optimizer/plan/"
 alias ctor="cd $GPSRC/src/backend/executor/"
 alias access="cd $GPSRC/src/backend/access/"
