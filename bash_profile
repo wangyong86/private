@@ -52,42 +52,49 @@ export TSBS=/home/wy/tsbs
 export FAST=/home/wy/superfast
 
 export PATH=$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
 
 #for source compiled arrow
 #export PKG_CONFIG_PATHl=$PKG_CONFIG_PATHl:/usr/local/lib64/pkgconfig
 
-#tool modify
+# tool modify
 alias tmux="tmux -u"
 alias gti="git"
 alias vim="/usr/bin/vim -O"
 alias vi="vim"
-alias vt="vi ~/private/exec/mytool"
 alias gdb="gdb -q"
 alias srb="source ~/.bash_profile"
 
-#utility path
-alias gpdb="cd $GPHOME/bin/"
-alias dd="cd $DD"
+# utility path
 alias ctest="cd ~/private/test"
 alias pr="cd ~/private"
-alias fast="cd ~/libsuperfast"
+alias vt="vi ~/private/exec/mytool"
 alias ppi="pp -i"
 alias ppd="pp -d"
 
-#source coce path
+# source coce path
 alias code="cd $GPSRC"
 alias fast="cd $FAST"
 alias plan="cd $GPSRC/src/backend/optimizer/plan/"
 alias ctor="cd $GPSRC/src/backend/executor/"
 alias access="cd $GPSRC/src/backend/access/"
 alias ctlg="cd $GPSRC/src/backend/catalog"
+
+# matrixdb path
+alias gpdb="cd $GPHOME/bin/"
+alias dd="cd $DD"
+alias vec="cd $GPSRC/contrib/mxvector"
+alias fast="cd ~/libsuperfast"
 alias mars="cd $MPATH"
 alias rt="cd $RTPATH"
 
+# third party path
 alias ccode="cd $CLICKSRC"
 alias tsbs="cd /home/wy/tsbs"
 
 # command compound
 alias src="source $GPHOME/greenplum_path.sh;source $GPDEMO/gpdemo-env.sh"
 alias mkmars="mars && make clean && CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' make -j7 CXX=/usr/bin/g++"
+
+# Database
+export PGDATABASE=t

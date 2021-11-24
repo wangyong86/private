@@ -30,12 +30,24 @@ if [ "$1" == "-i" ]; then
 fi 
 
 #create demo-cluster simple
+baseport=5658
 if [ "$1" == "-d" ]; then
     cd $GPSRC
-    #PGOPTIONS='-c gp_vmem_idle_resource_timeout=0' make create-demo-cluster PORT_BASE=15658; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
-    PGOPTIONS='-c gp_vmem_idle_resource_timeout=0' make create-demo-cluster NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false PORT_BASE=25658; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
-    #PGOPTIONS='-c gp_vmem_idle_resource_timeout=0' make create-demo-cluster PORT_BASE=5658; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
-    #make create-demo-cluster PORT_BASE=5658 NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false; source gpAux/gpdemo/gpdemo-env.sh && createdb wy
+	if [ $# -eq 2 ]; then
+		if [ "$2" == "-s" ]; then # standard test mode: 3 segment, 3 mirror
+			baseport=5432
+    		make create-demo-cluster PORT_BASE=$baseport && createdb t
+		else
+			echo "unsupported parameters:" $@
+		fi
+	else
+    	make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false && createdb t
+	fi
+	gpconfig -c gp_vmem_idle_resource_timeout -v 0 && gpstop -rqai
+
+    # make create-demo-cluster PORT_BASE=15658; && src && createdb t
+    # make create-demo-cluster NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false PORT_BASE=25658 && src && createdb t
+    #make create-demo-cluster PORT_BASE=5658 NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false; && src && createdb t
     cd -
 fi
 
