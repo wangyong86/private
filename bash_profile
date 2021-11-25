@@ -90,8 +90,8 @@ alias mars="cd $MPATH"
 alias rt="cd $RTPATH"
 
 # third party path
-alias ccode="cd $CLICKSRC"
 alias oc="cd ~/opensource"
+alias ck="cd $CLICKSRC"
 alias tsbs="cd /home/wy/tsbs"
 
 # command compound
