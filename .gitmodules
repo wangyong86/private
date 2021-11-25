@@ -1,0 +1,9 @@
+[submodule "opensource/folly"]
+	path = opensource/folly
+	url = git@github.com:facebook/folly.git
+	branch = main
+
+[submodule "opensource/abseil"]
+	path = opensource/abseil
+	url = git@github.com:abseil/abseil-cpp.git
+	branch = master

@@ -34,16 +34,20 @@ baseport=5658
 if [ "$1" == "-d" ]; then
     cd $GPSRC
 	if [ $# -eq 2 ]; then
-		if [ "$2" == "-s" ]; then # standard test mode: 3 segment, 3 mirror
+
+		# regression test mode: 3 segment, 3 mirror
+		if [ "$2" == "-t" ]; then 
 			baseport=5432
     		make create-demo-cluster PORT_BASE=$baseport && createdb t
 		else
 			echo "unsupported parameters:" $@
 		fi
-	else
+	else # debug mode
     	make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false && createdb t
 	fi
-	gpconfig -c gp_vmem_idle_resource_timeout -v 0 && gpstop -rqai
+	gpconfig -c gp_vmem_idle_resource_timeout -v 0
+	gpconfig -c enable_parallel_mode -v off 
+	gpstop -u
 
     # make create-demo-cluster PORT_BASE=15658; && src && createdb t
     # make create-demo-cluster NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false PORT_BASE=25658 && src && createdb t

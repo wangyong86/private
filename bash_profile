@@ -78,6 +78,7 @@ alias fast="cd $FAST"
 alias plan="cd $GPSRC/src/backend/optimizer/plan/"
 alias ctor="cd $GPSRC/src/backend/executor/"
 alias access="cd $GPSRC/src/backend/access/"
+alias cdb="cd $GPSRC/src/include/cdb/"
 alias ctlg="cd $GPSRC/src/backend/catalog"
 
 # matrixdb path
@@ -90,6 +91,7 @@ alias rt="cd $RTPATH"
 
 # third party path
 alias ccode="cd $CLICKSRC"
+alias oc="cd ~/opensource"
 alias tsbs="cd /home/wy/tsbs"
 
 # command compound
