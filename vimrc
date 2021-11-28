@@ -58,7 +58,7 @@ set autoindent
 
 " line width and no wrap
 set cc=80
-set nowrap
+"set nowrap
 
 " align at (
 set cino=(0

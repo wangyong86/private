@@ -37,7 +37,6 @@ if [ "$1" == "-d" ]; then
 
 		# regression test mode: 3 segment, 3 mirror
 		if [ "$2" == "-t" ]; then 
-			baseport=5432
     		make create-demo-cluster PORT_BASE=$baseport && createdb t
 		else
 			echo "unsupported parameters:" $@

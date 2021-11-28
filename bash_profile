@@ -4,6 +4,7 @@ if [ -f ~/.bashrc ]; then
     . ~/.bashrc
 fi
 
+#use gcc-7 as default compiler
 if [ -f /opt/rh/devtoolset-7/enable ]; then
     . /opt/rh/devtoolset-7/enable
 fi
@@ -16,7 +17,8 @@ if [ "$HOSTNAME" = wydev ]; then
 	export GIT=/home/wy/git-2.12.4
 #server
 else 
-	export GPHOME=/data1/wy64/gpdb64
+	export GPHOME=/home/wy/gpdb
+#	export GPHOME=/data1/wy64/gpdb64
 	export GPSRC=~/matrixdb
 fi
 
@@ -24,6 +26,7 @@ fi
 #export GPHOME=/home/wy/gpdb64
 #export GPSRC=~/64matrixdb
 
+# Setup matrixdb env
 if [ -f $GPHOME/greenplum_path.sh ]; then
     source $GPHOME/greenplum_path.sh
 fi
@@ -67,7 +70,8 @@ alias srb="source ~/.bash_profile"
 
 # utility path
 alias ctest="cd ~/private/test"
-alias pr="cd ~/private"
+alias prd="cd ~/private"
+alias pr="prd; vi "
 alias vt="vi ~/private/exec/mytool"
 alias ppi="pp -i"
 alias ppd="pp -d"
@@ -96,7 +100,12 @@ alias tsbs="cd /home/wy/tsbs"
 
 # command compound
 alias src="source $GPHOME/greenplum_path.sh;source $GPDEMO/gpdemo-env.sh"
+alias g9="source /opt/rh/devtoolset-9/enable"
 alias mkmars="mars && make clean && CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' make -j7 CXX=/usr/bin/g++"
 
 # Database
 export PGDATABASE=t
+
+# For tmux, it may incur unknown env change at very early stage(before loading
+# /etc/profile
+unset CC; unset CXX
