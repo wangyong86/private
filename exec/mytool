@@ -77,7 +77,8 @@ if [ "$1" == "-l" ]; then
 	if [ $host == "wydev" ]; then
 		parallel=8
 	fi
-	code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -raqi
+	code && make clean && make -sj && mkmars && code && make -j install && gpstop -raqi
+	#code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -raqi
 fi
 
 if [ "$1" == "-w" ]; then
@@ -90,10 +91,11 @@ if [ "$1" == "-w" ]; then
 	#code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qa && mytool -d 
 fi
 
-#OLDGPHOME=/home/wy/gpdb
-OLDGPHOME=/home/wy/gpdb64
+OLDGPHOME=/home/wy/gpdb
+#OLDGPHOME=/home/wy/gpdb64
 if [ "$1" == "-c" ]; then
-    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
+	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
+    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure  --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     echo "config matrixdb finished"
 fi
 

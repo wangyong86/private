@@ -91,6 +91,9 @@ alias dd="cd $DD"
 alias vec="cd $GPSRC/contrib/mxvector"
 alias fast="cd ~/libsuperfast"
 alias mars="cd $MPATH"
+alias mts="cd $GPSRC/contrib/matrixts"
+alias cv="cd $GPSRC/contrib/matrixts/continuous_view"
+alias st="cd $GPSRC/src/backend/access/sortheap"
 alias rt="cd $RTPATH"
 
 # third party path
