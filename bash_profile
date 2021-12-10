@@ -100,6 +100,11 @@ alias rt="cd $RTPATH"
 alias oc="cd ~/opensource"
 alias ck="cd $CLICKSRC"
 alias tsbs="cd /home/wy/tsbs"
+alias db1="cd $DD/dbfast1/demoDataDir0/base"
+alias log1="cd $DD/dbfast1/demoDataDir0/log"
+
+#temporary path
+alias lx="cd ~/lxdev4"
 
 # command compound
 alias src="source $GPHOME/greenplum_path.sh;source $GPDEMO/gpdemo-env.sh"
