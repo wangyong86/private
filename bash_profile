@@ -97,7 +97,7 @@ alias st="cd $GPSRC/src/backend/access/sortheap"
 alias rt="cd $RTPATH"
 
 # third party path
-alias oc="cd ~/opensource"
+alias os="cd ~/opensource"
 alias ck="cd $CLICKSRC"
 alias tsbs="cd /home/wy/tsbs"
 alias db1="cd $DD/dbfast1/demoDataDir0/base"
