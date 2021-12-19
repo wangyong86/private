@@ -101,7 +101,8 @@ alias os="cd ~/opensource"
 alias ck="cd $CLICKSRC"
 alias tsbs="cd /home/wy/tsbs"
 alias db1="cd $DD/dbfast1/demoDataDir0/base"
-alias log1="cd $DD/dbfast1/demoDataDir0/log"
+alias qd="cd $DD/qddir/demoDataDir-1/base"
+alias logd="cd $DD/qddir/demoDataDir-1/log"
 
 #temporary path
 alias lx="cd ~/lxdev4"

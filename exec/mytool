@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 shopt -s expand_aliases
 
 function help()
@@ -22,10 +22,17 @@ fi
 source ~/.bash_profile
 #echo $1
 if [ "$1" == "-i" ]; then
-    cd $GPSRC
+	dir=$GPSRC
+	if [ $# -eq 2 ]; then
+		dir=$2
+	fi
+    cd $dir
 	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.hpp" >cscope.files
     cscope -Rbkq -i cscope.files
     echo "build cscope index finished, file is located at current directory"
+
+	#rebuild ctags
+	make_ctags -m
     cd -
 fi 
 
@@ -95,7 +102,7 @@ OLDGPHOME=/home/wy/gpdb
 #OLDGPHOME=/home/wy/gpdb64
 if [ "$1" == "-c" ]; then
 	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
-    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
+    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME --with-numa
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     echo "config matrixdb finished"
 fi
