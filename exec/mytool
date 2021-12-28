@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 shopt -s expand_aliases
 
 function help()
@@ -22,9 +22,13 @@ fi
 source ~/.bash_profile
 #echo $1
 if [ "$1" == "-i" ]; then
+	#mostly, we build meta for matrixdb
 	dir=$GPSRC
+	opt="-m"
+
 	if [ $# -eq 2 ]; then
 		dir=$2
+		opt=""
 	fi
     cd $dir
 	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.hpp" >cscope.files
@@ -32,7 +36,7 @@ if [ "$1" == "-i" ]; then
     echo "build cscope index finished, file is located at current directory"
 
 	#rebuild ctags
-	make_ctags -m
+	make_ctags $opt
     cd -
 fi 
 
@@ -55,17 +59,7 @@ if [ "$1" == "-d" ]; then
 	gpconfig -c enable_parallel_mode -v off 
 	gpstop -u
 
-    # make create-demo-cluster PORT_BASE=15658; && src && createdb t
-    # make create-demo-cluster NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false PORT_BASE=25658 && src && createdb t
-    #make create-demo-cluster PORT_BASE=5658 NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false; && src && createdb t
     cd -
-fi
-
-#backup config file
-if [ "$1" == "-b" ]; then
-	TOOLDIR=private/exec/
-	CONFIG_PATH=$TOOLDIR/config
-	cd && cp -r .gdbinit .gitconfig .vim .vimrc .screenrc .tmux.conf .bash_profile $CONFIG_PATH/ && tar cvzf toolset.tgz $TOOLDIR && cd - 1>/dev/null
 fi
 
 #full refresh system-weight refresh 
@@ -79,13 +73,21 @@ if [ "$1" == "-w" ]; then
 fi
 
 if [ "$1" == "-l" ]; then
-	parallel=72
 	host=`hostname`
 	if [ $host == "wydev" ]; then
 		parallel=8
 	fi
-	code && make clean && make -sj && mkmars && code && make -j install && gpstop -raqi
-	#code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -raqi
+
+	code
+	if [ $# -eq 2 ]; then
+		if [ "$2" == "-c" ]; then
+			make clean
+		fi
+	fi
+
+	make -sj && code && make -j install && gpstop -raqi
+	#make -sj && mkmars && code && make -j install && gpstop -raqi
+	cd -
 fi
 
 if [ "$1" == "-w" ]; then
@@ -99,10 +101,9 @@ if [ "$1" == "-w" ]; then
 fi
 
 OLDGPHOME=/home/wy/gpdb
-#OLDGPHOME=/home/wy/gpdb64
 if [ "$1" == "-c" ]; then
 	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
-    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME --with-numa
+    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --prefix=$OLDGPHOME
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     echo "config matrixdb finished"
 fi
