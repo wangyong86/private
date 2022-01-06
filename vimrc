@@ -83,6 +83,9 @@ colorscheme desert
 set foldmethod=indent
 set foldlevelstart=99
 
+" search highlight
+set hlsearch
+
 set nocscopeverbose
 if filereadable("/home/wy/matrixdb/cscope.out")
     cs add /home/wy/matrixdb/cscope.out
