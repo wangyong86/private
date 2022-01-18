@@ -85,7 +85,7 @@ if [ "$1" == "-l" ]; then
 		fi
 	fi
 
-	make -sj && code && make -j install && gpstop -raqi
+	code && make -sj && make -j install && gpstop -raqi
 	#make -sj && mkmars && code && make -j install && gpstop -raqi
 	cd -
 fi

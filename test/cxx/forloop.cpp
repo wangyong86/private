@@ -18,7 +18,16 @@ void testForLoop()
 	}
 }
 
+void testforcond()
+{
+	for(int i = 1; i < 1; i++)
+	{
+		printf ("loop none\n"); 
+	}
+}
+
 int main()
 {
 	testForLoop();
+	testforcond();
 }

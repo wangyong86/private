@@ -77,7 +77,7 @@ set ruler
 
 " avoid blue comment hard to recognation during night
 set t_Co=256 "
-colorscheme desert
+colorscheme darkblue
 
 " set foldmethod=indent and disable it by default
 set foldmethod=indent
@@ -86,9 +86,13 @@ set foldlevelstart=99
 " search highlight
 set hlsearch
 
-set nocscopeverbose
-if filereadable("/home/wy/matrixdb/cscope.out")
-    cs add /home/wy/matrixdb/cscope.out
+if has("cscope")
+	set csto=1   " search tags first
+	"set cst 	" use :cs find g, not :tag which is defalut
+	set nocscopeverbose " not show cscope db add info
+	if filereadable("/home/wy/matrixdb/cscope.out")
+    	cs add /home/wy/matrixdb/cscope.out
+	endif
 endif
 
 " open/close taglsit using f1/esc"

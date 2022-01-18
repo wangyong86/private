@@ -53,8 +53,9 @@ export RTPATH=$GPSRC/src/test/regress
 export MPATH=$GPSRC/contrib/mars
 export TSBS=/home/wy/tsbs
 export FAST=/home/wy/superfast
+export VIMDIR=/home/wy/vim
 
-export PATH=$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
+export PATH=$HOME/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
 
 #for source compiled arrow
@@ -63,8 +64,8 @@ export PATH=$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/
 # tool modify
 alias tmux="tmux -u"
 alias gti="git"
-alias vim="/usr/bin/vim -O"
-alias vi="vim"
+alias vim="$VIMDIR/bin/vim -O"
+alias vi="$VIMDIR/bin/vim"
 alias gdb="gdb -q"
 alias srb="source ~/.bash_profile"
 
@@ -101,8 +102,10 @@ alias os="cd ~/opensource"
 alias ck="cd $CLICKSRC"
 alias tsbs="cd /home/wy/tsbs"
 alias db1="cd $DD/dbfast1/demoDataDir0/base"
+alias log1="cd $DD/dbfast1/demoDataDir0/log"
 alias qd="cd $DD/qddir/demoDataDir-1/base"
 alias logd="cd $DD/qddir/demoDataDir-1/log"
+alias libc="cd ~/opensource/glibc"
 
 #temporary path
 alias lx="cd ~/lxdev4"

@@ -1,4 +1,5 @@
 [alias]
+    ad = add
     bl = blame
     br = branch
     ci = commit
@@ -18,8 +19,11 @@
 [push]
 	default = simple
 
-[url "git://"]
-	insteadOf = https://
+#[url "git://"]
+#	insteadOf = https://
 
+#[url "https://hub.fastgit.org/"]
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
+[core]
+	editor = /home/wy/vim/bin/vim
