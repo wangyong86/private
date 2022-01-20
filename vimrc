@@ -86,6 +86,9 @@ set foldlevelstart=99
 " search highlight
 set hlsearch
 
+" enable mouse
+set mouse=a
+
 if has("cscope")
 	set csto=1   " search tags first
 	"set cst 	" use :cs find g, not :tag which is defalut
@@ -96,6 +99,15 @@ if has("cscope")
 endif
 
 " open/close taglsit using f1/esc"
+let Tlist_Use_SingleClick=1 " enable mouse single click
+let Tlist_Show_One_File=1   " only display current file
+let Tlist_Ctags_Cmd="/usr/bin/ctags"
+let Tlist_GainFocus_On_ToggleOpen=1  " focus on tlist win
+let Tlist_File_Fold_Auto_Close=1 " fold tags of other files
+let Tlist_Use_Right_Window=1   " location
+let Tlist_Exit_OnlyWindow=1 " exit if last
+let Tlist_WinWidth=40
+
 map <C-p> <Esc>:TlistToggle<Cr>
 
 "s: symbol; g: definition; c: caller; d: callee; t: pattern; d: callee;
