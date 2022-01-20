@@ -1,0 +1,7 @@
+#intermediate result
+*.[o|so]
+*.log
+a.out
+temp
+
+# tool dir

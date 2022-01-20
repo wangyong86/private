@@ -98,7 +98,9 @@ endif
 " open/close taglsit using f1/esc"
 map <C-p> <Esc>:TlistToggle<Cr>
 
-nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+"s: symbol; g: definition; c: caller; d: callee; t: pattern; d: callee;
+"e: egrep; f: file; i: included
+nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>   
 nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
 nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
 nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>

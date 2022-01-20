@@ -6,7 +6,7 @@ fi
 
 #use gcc-7 as default compiler
 if [ -f /opt/rh/devtoolset-7/enable ]; then
-    . /opt/rh/devtoolset-7/enable
+	/opt/rh/devtoolset-7/enable
 fi
 
 # host relate config
@@ -41,9 +41,7 @@ fi
 
 
 # supress perl locale warning
-#export LC_ALL=C
 export LC_ALL=en_US.UTF-8
-#export LANGUAGE=en_US.UTF-8
 
 export CLICKSRC=~/ClickHouse
 export GPDEMO=$GPSRC/gpAux/gpdemo/
@@ -55,7 +53,7 @@ export TSBS=/home/wy/tsbs
 export FAST=/home/wy/superfast
 export VIMDIR=/home/wy/vim
 
-export PATH=$HOME/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
+export PATH=$HOME/install/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
 
 #for source compiled arrow
@@ -113,6 +111,7 @@ alias lx="cd ~/lxdev4"
 # command compound
 alias src="source $GPHOME/greenplum_path.sh;source $GPDEMO/gpdemo-env.sh"
 alias g9="source /opt/rh/devtoolset-9/enable"
+alias g8="source /opt/rh/devtoolset-8/enable"
 alias mkmars="mars && make clean && CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' make -j7 CXX=/usr/bin/g++"
 
 # Database
