@@ -1,0 +1,63 @@
+global var1
+global var2
+probe process("/home/wy/opensource/postgres/bin/postgres").function("ExecInsert").call {   
+  var1[pid(),0] = gettimeofday_us()
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("ExecInsert").return {   
+  var1[pid(),1] = gettimeofday_us()
+  var2[1] <<< var1[pid(),1] - var1[pid(),0]
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("heap_insert").call {   
+  var1[pid(),2] = gettimeofday_us()
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("heap_insert").return {   
+  var1[pid(),3] = gettimeofday_us()
+  var2[2] <<< var1[pid(),3] - var1[pid(),2] 
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("ExecInsertIndexTuples").call {   
+  var1[pid(),4] = gettimeofday_us()
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("ExecInsertIndexTuples").return {   
+  var1[pid(),5] = gettimeofday_us()
+  var2[3] <<< var1[pid(),5] - var1[pid(),4]
+ 
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("setLastTid").call {   
+  var1[pid(),6] = gettimeofday_us()
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("setLastTid").return {   
+  var1[pid(),7] = gettimeofday_us()
+  var2[4] <<< var1[pid(),7] - var1[pid(),6]
+ 
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("list_free").call {   
+  var1[pid(),8] = gettimeofday_us()
+}
+
+probe process("/home/wy/opensource/postgres/bin/postgres").function("list_free").return {   
+  var1[pid(),9] = gettimeofday_us()
+  var2[5] <<< var1[pid(),9] - var1[pid(),8]
+ 
+}
+
+probe timer.s(5) {
+	if ( @count(var2[1]) > 0 ) {
+		printf("time : %d \n",gettimeofday_s())
+		printf("ExecInsert            us min: %d, max: %d, avg: %d, sum: %d, count: %d\n", @min(var2[1]), @max(var2[1]), @avg(var2[1]), @sum(var2[1]), @count(var2[1]) )  
+		printf("heap_insert           us min: %d, max: %d, avg: %d, sum: %d, count: %d\n", @min(var2[2]), @max(var2[2]), @avg(var2[2]), @sum(var2[2]), @count(var2[2]) )
+		printf("setLastTid           us min: %d, max: %d, avg: %d, sum: %d, count: %d\n", @min(var2[4]), @max(var2[4]), @avg(var2[4]), @sum(var2[4]), @count(var2[4]) )
+		printf("list_free           us min: %d, max: %d, avg: %d, sum: %d, count: %d\n", @min(var2[5]), @max(var2[5]), @avg(var2[5]), @sum(var2[5]), @count(var2[5]) )
+			if ( @count(var2[3]) > 0 ){
+	    printf("ExecInsertIndexTuples us min: %d, max: %d, avg: %d, sum: %d, count: %d\n", @min(var2[3]), @max(var2[3]), @avg(var2[3]), @sum(var2[3]), @count(var2[3]) )
+		}
+		printf(" \n")
+	}
+}

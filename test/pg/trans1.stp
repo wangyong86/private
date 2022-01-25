@@ -1,0 +1,29 @@
+global start
+global abort
+global commit
+global time
+global self_ts
+
+probe process($1).mark("transaction-start")
+{
+      start["Start"] = i++;
+      self_ts  = gettimeofday_us();
+}
+
+probe process($1).mark("transaction-abort")
+{
+      abort["Abort"] = i++;
+}
+
+probe process($1).mark("transaction-commit")
+{
+      commit["Commit"] = i++;
+      time["Total time (ns)"] += gettimeofday_us() - self_ts;
+      self_ts=0;
+}
+
+probe timer.s(10) {
+	if (time["Total time (ns)"] > 0) {
+		printf("transaction time is:%d\n", time["Total time (ns)"]);
+	}
+}

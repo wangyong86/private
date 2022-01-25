@@ -1,0 +1,5 @@
+probe process("/home/wy/opensource/postgres/bin/postgres").mark("query-start")
+{
+	printf("hello, the world\n")
+	exit()
+}

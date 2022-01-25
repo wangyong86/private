@@ -22,6 +22,9 @@ else
 	export GPSRC=~/matrixdb
 fi
 
+export PGHOME=/home/wy/opensource/postgres
+export PGDATA=/home/wy/opensource/postgres/data
+
 #export GPHOME=/home/wy/temp/usr/local/matrixdb-4.3.0.community
 #export GPHOME=/home/wy/gpdb64
 #export GPSRC=~/64matrixdb
@@ -42,6 +45,8 @@ fi
 
 # supress perl locale warning
 export LC_ALL=en_US.UTF-8
+
+# term
 
 export CLICKSRC=~/ClickHouse
 export GPDEMO=$GPSRC/gpAux/gpdemo/

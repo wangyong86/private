@@ -11,20 +11,27 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
+" eye pleasant color scheme: detailed:https://github.com/morhetz/gruvbox/wiki/
+Plugin 'morhetz/gruvbox'
+
+" detailed intro: https://www.jianshu.com/p/27d7fbd6cdc6
 Plugin 'Valloric/YouCompleteMe'
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
 " plugin on GitHub repo
 Plugin 'tpope/vim-fugitive'
+
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
 " Git plugin not hosted on GitHub
 Plugin 'git://git.wincent.com/command-t.git'
+
 " git repos on your local machine (i.e. when working on your own plugin)
 " Plugin 'file:///home/gmarik/path/to/plugin'
 " The sparkup vim script is in a subdirectory of this repo called vim.
 " Pass the path to set the runtimepath properly.
+
 Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 " Install L9 and avoid a Naming conflict if you've already installed a
 " different version somewhere else.
@@ -32,6 +39,7 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
+
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
@@ -45,6 +53,8 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 " ========================== END settingn for Vundle
+
+autocmd vimenter * ++nested colorscheme gruvbox
 
 set number
 
@@ -70,14 +80,20 @@ filetype on
 syntax on
 
 " don't add style automatically
-set paste
+set paste "unpaste
+
+" !make, copen: open make result
+" so $vimrcfile: reload specific vimrc; :so %; current editing vimrc
 
 " dispaly row, col 
 set ruler
 
 " avoid blue comment hard to recognation during night
 set t_Co=256 "
-colorscheme darkblue
+"colorscheme desert
+
+" display invisible char
+" :set invlist
 
 " set foldmethod=indent and disable it by default
 set foldmethod=indent
@@ -88,15 +104,6 @@ set hlsearch
 
 " enable mouse
 set mouse=a
-
-if has("cscope")
-	set csto=1   " search tags first
-	"set cst 	" use :cs find g, not :tag which is defalut
-	set nocscopeverbose " not show cscope db add info
-	if filereadable("/home/wy/matrixdb/cscope.out")
-    	cs add /home/wy/matrixdb/cscope.out
-	endif
-endif
 
 " open/close taglsit using f1/esc"
 let Tlist_Use_SingleClick=1 " enable mouse single click
@@ -110,6 +117,28 @@ let Tlist_WinWidth=40
 
 map <C-p> <Esc>:TlistToggle<Cr>
 
+"cctree and default hotkey
+autocmd vimenter * if filereadable('/home/wy/matrixdb/cscope.out') | CCTreeLoadDB /home/wy/matrixdb/cscope.out | endif
+"   g:CCTreeKeyTraceForwardTree = '<C-\>>'
+"   g:CCTreeKeyTraceReverseTree = '<C-\><'
+"   g:CCTreeKeyHilightTree = '<C-l>'
+"   g:CCTreeKeySaveWindow = '<C-\>y'
+"   g:CCTreeKeyToggleWindow = '<C-\>w
+"   g:CCTreeKeyCompressTree = 'zs'
+"   g:CCTreeKeyDepthPlus = '<C-\>='
+"   g:CCTreeKeyDepthMinus = '<C-\>-'
+
+"cscope
+if has("cscope")
+	set csto=1   " search tags first
+	"set cst 	" use :cs find g, not :tag which is defalut
+	set nocscopeverbose " not show cscope db add info
+	if filereadable("/home/wy/matrixdb/cscope.out")
+		cs add /home/wy/matrixdb/cscope.out
+	endif
+endif
+
+" bind cscope key
 "s: symbol; g: definition; c: caller; d: callee; t: pattern; d: callee;
 "e: egrep; f: file; i: included
 nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>   

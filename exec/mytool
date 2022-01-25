@@ -5,11 +5,12 @@ shopt -s expand_aliases
 function help()
 {
     echo " mytool help:"
-    echo "          -i: build cscope index"
-    echo "          -d: make demo cluster"
     echo "          -c: configure matrixdb/greenplum db"
-    echo "          -s: import greenplum and demo cluster config"
+    echo "          -d: make demo cluster. default: 1p; -t: 3p 3m"
+    echo "          -i: build cscope index and ctags"
     echo "          -l: reconstruct demo cluster lighweight"
+    echo "          -s: import greenplum and demo cluster config"
+    echo "          -t: matrixdb regression test"
     echo "          -w: reconstruct demo cluster heavily, include rebuild cluster"
 }
 
@@ -31,8 +32,11 @@ if [ "$1" == "-i" ]; then
 		opt=""
 	fi
     cd $dir
-	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.hpp" >cscope.files
-    cscope -Rbkq -i cscope.files
+	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.hpp"|grep -v test |grep -v mars >cscope.files
+    cscope -Rbkq -i cscope.files 2>cscope.temp
+	grep -v cannot cscope.temp
+	rm -f cscope.temp
+
     echo "build cscope index finished, file is located at current directory"
 
 	#rebuild ctags
@@ -103,7 +107,9 @@ fi
 OLDGPHOME=/home/wy/gpdb
 if [ "$1" == "-c" ]; then
 	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
-    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --prefix=$OLDGPHOME
+    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' sh -x ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --enable-dtrace --prefix=$OLDGPHOME &>config.out
+
+    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --prefix=$OLDGPHOME
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     echo "config matrixdb finished"
 fi
