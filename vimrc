@@ -2,6 +2,9 @@
 set nocompatible
 filetype off
 
+if has('python3')
+endif
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -87,6 +90,10 @@ set paste "unpaste
 
 " dispaly row, col 
 set ruler
+
+" bell
+set noeb
+set vb
 
 " avoid blue comment hard to recognation during night
 set t_Co=256 "

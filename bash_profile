@@ -14,7 +14,7 @@ fi
 if [ "$HOSTNAME" = wydev ]; then 
 	export GPHOME=/home/wy/gpdb
 	export GPSRC=~/matrixdb
-	export GIT=/home/wy/git-2.12.4
+#	export GIT=/home/wy/git-2.12.4
 #server
 else 
 	export GPHOME=/home/wy/gpdb
@@ -58,7 +58,7 @@ export TSBS=/home/wy/tsbs
 export FAST=/home/wy/superfast
 export VIMDIR=/home/wy/vim
 
-export PATH=$HOME/install/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
+export PATH=$HOME/install/bin:$TSBS/bin:/usr/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
 
 #for source compiled arrow
