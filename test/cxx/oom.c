@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/sysinfo.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -49,6 +50,7 @@ int readint(const char* filename, int *value)
 
 	buffer[count] = 0;
 	*value = atoi(buffer);
+	printf("filename:%s str:%s value:%d, strsize:%d\n", filename, buffer, *value, count);
 	close(fd);
 
 	return 0;
@@ -61,33 +63,10 @@ int readmemconf(vm *v)
 	return rst1 < 0 ? rst1 : rst2;
 }
 
-int malloc_test_once(size_t size)
-{
-	char * p = (char *) malloc (size);
-	if (p != NULL)
-		printf("malloc half memory %ld is successful\n", size);
-	else
-		printf("malloc half memory %ld is failed\n", size);
-	free(p);
-	return p ? 0 : -1;
-}
-
-int malloc_test(size_t size)
-{
-	long s = size;
-	while(1)
-	{
-		if (malloc_test_once(s) < 0)
-			s /= 2;
-		else
-			return 1;
-	}
-}
-
 int main()
 {
 	struct sysinfo info;
-	vm conf;
+	vm conf = {2, 95};
 	int rst = 0;
 	if (rst = sysinfo(&info))
 	{
@@ -95,14 +74,20 @@ int main()
 		return -1;
 	}
 
-	// malloc
-	printf("all system memory is: %ld bytes\n", info.totalram);
-	if (readmemconf(&conf) < 0)
-		return -1;
+	readmemconf(&conf);
+	printf("Overcommit setting: level: %d ratio: %d\n", conf.config, conf.ratio);
 
-	// only malloc half of physical memory	
-	size_t size = info.totalram * 100 / conf.ratio;
-	malloc_test(size);
-		
-	getpath();
+	// malloc memory exceed physical value
+	size_t size = info.totalram * 1.5;
+	char *p = (char *) malloc(size);
+	if (!p)
+	{
+		printf("Can't malloc size, size: %zu\n", size);
+		return -1;
+	}
+	
+	printf("malloc size: %zu MB\n", size / 1024 / 1024);
+	
+
+	memset(p, 0, size);
 }
