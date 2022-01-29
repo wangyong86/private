@@ -9,7 +9,13 @@ FIO:
 SystemTap:
 
 
-Tsar:
+Tsar:git@github.com:alibaba/tsar.git
 
 
-
+smem:
+python, examine concrete memory distribution, RSS/PSS/USS
+others: ipcs examine share memory info, but size seems inaccurate;
+pmap: filter rw-s, s indicate it's shared memory. correspond to /dev/zero. equivalent to /proc/$pid/smaps
+/dev/shm: tmpfs. postgres mmap some shared memory to it's files
+psql-shared-buffers. fixed setting, shared by postgres and it's descent
+top: SHR, all shared part by this proc, including shared memory and shared library

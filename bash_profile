@@ -109,6 +109,7 @@ alias log1="cd $DD/dbfast1/demoDataDir0/log"
 alias qd="cd $DD/qddir/demoDataDir-1/base"
 alias logd="cd $DD/qddir/demoDataDir-1/log"
 alias libc="cd ~/opensource/glibc"
+alias kernel="cd ~/opensource/kernel"
 
 #temporary path
 alias lx="cd ~/lxdev4"

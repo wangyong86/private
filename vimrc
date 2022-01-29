@@ -117,7 +117,7 @@ let Tlist_WinWidth=40
 
 map <C-p> <Esc>:TlistToggle<Cr>
 
-"cctree and default hotkey
+"cctree and default hotkey, Ref: https://sites.google.com/site/vimcctree/faq
 autocmd vimenter * if filereadable('/home/wy/matrixdb/cscope.out') | CCTreeLoadDB /home/wy/matrixdb/cscope.out | endif
 "   g:CCTreeKeyTraceForwardTree = '<C-\>>'
 "   g:CCTreeKeyTraceReverseTree = '<C-\><'
