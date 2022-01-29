@@ -8,6 +8,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+/*
+	1:) excessive memory usage(like memset) will squeeze system memory, evict
+		page cache/buffer, etc.
+	2:) furthermore, swap space will be used;
+	3:) oom will killer dominant memory user
+ */
+
 // read /proc file is recommendated way to obtain system parameter
 const char *omfile = "/proc/sys/vm/overcommit_memory";
 const char *omratio = "/proc/sys/vm/overcommit_ratio";
