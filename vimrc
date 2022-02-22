@@ -103,7 +103,7 @@ set t_Co=256 "
 " :set invlist
 
 " set foldmethod=indent and disable it by default
-set foldmethod=indent
+" set foldmethod=indent
 set foldlevelstart=99
 
 " search highlight

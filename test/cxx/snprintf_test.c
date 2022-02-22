@@ -23,7 +23,7 @@ void test()
 
 	uint32_t oid = 0xF0000000;
 	snprintf(name, MAX_NAME_LEN, "name_%d\0", oid);
-	printf("name is: %s\n", name);
+	printf("name is: %s\%\n", name);
 
 	snprintf(name, MAX_NAME_LEN, "name_%u\0", oid);
 	printf("name using unsigned int is: %s\n", name);	

@@ -108,11 +108,16 @@ fi
 
 OLDGPHOME=/home/wy/gpdb
 if [ "$1" == "-c" ]; then
+	code
 	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
-    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --enable-dtrace --prefix=$OLDGPHOME
+    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
+    #./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-depend --prefix=$OLDGPHOME
+    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-depend --prefix=$OLDGPHOME
+    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --enable-dtrace --prefix=$OLDGPHOME
 
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --prefix=$OLDGPHOME
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
+	cd -
     echo "config matrixdb finished"
 fi
 

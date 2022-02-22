@@ -4,18 +4,18 @@ global commit
 global time
 global self_ts
 
-probe process("/home/wy/opensource/postgres/bin/postgres").mark("transaction-start")
+probe process("/home/wy/gpdb/bin/postgres").mark("transaction-start")
 {
       start["Start"] = i++;
       self_ts  = gettimeofday_us();
 }
 
-probe process("/home/wy/opensource/postgres/bin/postgres").mark("transaction-abort")
+probe process("/home/wy/gpdb/bin/postgres").mark("transaction-abort")
 {
       abort["Abort"] = i++;
 }
 
-probe process("/home/wy/opensource/postgres/bin/postgres").mark("transaction-commit")
+probe process("/home/wy/gpdb/bin/postgres").mark("transaction-commit")
 {
       commit["Commit"] = i++;
       time["Total time (ns)"] += gettimeofday_us() - self_ts;

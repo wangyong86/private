@@ -6,7 +6,7 @@ fi
 
 #use gcc-7 as default compiler
 if [ -f /opt/rh/devtoolset-7/enable ]; then
-	/opt/rh/devtoolset-7/enable
+	source /opt/rh/devtoolset-7/enable
 fi
 
 # host relate config
@@ -53,12 +53,12 @@ export GPDEMO=$GPSRC/gpAux/gpdemo/
 export LLVM=/home/wy/llvm-project
 export DD=$GPDEMO/datadirs
 export RTPATH=$GPSRC/src/test/regress
-export MPATH=$GPSRC/contrib/mars
+export CPATH=$GPSRC/contrib
 export TSBS=/home/wy/tsbs
 export FAST=/home/wy/superfast
 export VIMDIR=/home/wy/vim
 
-export PATH=$HOME/install/bin:$TSBS/bin:/usr/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
+export PATH=/opt/MegaRAID/MegaCli/:$HOME/install/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
 
 #for source compiled arrow
@@ -94,7 +94,8 @@ alias gpdb="cd $GPHOME/bin/"
 alias dd="cd $DD"
 alias vec="cd $GPSRC/contrib/mxvector"
 alias fast="cd ~/libsuperfast"
-alias mars="cd $MPATH"
+alias mars="cd $CPATH/mars"
+alias mars3="cd $CPATH/mars3"
 alias mts="cd $GPSRC/contrib/matrixts"
 alias cv="cd $GPSRC/contrib/matrixts/continuous_view"
 alias st="cd $GPSRC/src/backend/access/sortheap"
@@ -116,6 +117,7 @@ alias lx="cd ~/lxdev4"
 
 # command compound
 alias src="source $GPHOME/greenplum_path.sh;source $GPDEMO/gpdemo-env.sh"
+alias g11="source /opt/rh/devtoolset-11/enable"
 alias g9="source /opt/rh/devtoolset-9/enable"
 alias g8="source /opt/rh/devtoolset-8/enable"
 alias mkmars="mars && make clean && CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' make -j7 CXX=/usr/bin/g++"

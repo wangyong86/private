@@ -1,0 +1,10 @@
+global sum
+global count
+probe process("/home/wy/gpdb/bin/postgres").function("ReadBuffer").return{
+	sum += gettimeofday_us() - @entry(gettimeofday_us())
+	count++
+}
+
+probe timer.s(10) {
+ printf("sum:%d, count:%d, avg:%d\n", sum, count, sum/count)
+}
