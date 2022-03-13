@@ -65,7 +65,7 @@ export PATH=/opt/MegaRAID/MegaCli/:$HOME/install/bin:$TSBS/bin:$GIT:$PATH:$LLVM/
 #export PKG_CONFIG_PATHl=$PKG_CONFIG_PATHl:/usr/local/lib64/pkgconfig
 
 # tool modify
-alias tmux="tmux -u"
+alias tmux="tmux -u -2"
 alias gti="git"
 alias vim="$VIMDIR/bin/vim -O"
 alias vi="$VIMDIR/bin/vim"
@@ -110,6 +110,7 @@ alias log1="cd $DD/dbfast1/demoDataDir0/log"
 alias qd="cd $DD/qddir/demoDataDir-1/base"
 alias logd="cd $DD/qddir/demoDataDir-1/log"
 alias libc="cd ~/opensource/glibc"
+alias folly="cd ~/opensource/folly/folly"
 alias kernel="cd ~/opensource/kernel"
 
 #temporary path
@@ -121,6 +122,7 @@ alias g11="source /opt/rh/devtoolset-11/enable"
 alias g9="source /opt/rh/devtoolset-9/enable"
 alias g8="source /opt/rh/devtoolset-8/enable"
 alias mkmars="mars && make clean && CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' make -j7 CXX=/usr/bin/g++"
+alias xmake="compiledb make"
 
 # Database
 export PGDATABASE=t

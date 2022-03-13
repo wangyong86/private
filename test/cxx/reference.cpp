@@ -2,7 +2,7 @@
 using namespace std;
 class base {
 public:
-	void func()
+	virtual void func()
 	{
 		cout << "in base" << endl;
 	}
@@ -19,6 +19,12 @@ public:
 	}
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{ 
+	derived c;
+	base &e = c;
+	c.func();
+	derived &d = dynamic_cast<derived&>(e);
+	d.func();
 	cout << "main" << endl;
 }

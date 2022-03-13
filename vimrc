@@ -14,7 +14,7 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-" eye pleasant color scheme: detailed:https://github.com/morhetz/gruvbox/wiki/
+" eye pleasant color scheme: 
 Plugin 'morhetz/gruvbox'
 
 " detailed intro: https://www.jianshu.com/p/27d7fbd6cdc6
@@ -57,6 +57,7 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 " ========================== END settingn for Vundle
 
+" detailed:https://github.com/morhetz/gruvbox/wiki/
 autocmd vimenter * ++nested colorscheme gruvbox
 
 set number
@@ -68,6 +69,7 @@ set noet
 
 " auto indent using 4 spaces
 set autoindent
+set cindent
 
 " line width and no wrap
 set cc=80

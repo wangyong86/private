@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 class base {
 public:
@@ -19,6 +20,12 @@ public:
 	}
 };
 
+vector<base*> func()
+{
+	return vector<derived*>();
+}
+
 int main(int argc, char **argv) {
+	func();
 	cout << "main" << endl;
 }

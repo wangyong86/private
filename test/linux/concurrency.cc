@@ -7,6 +7,8 @@
  * 5) Bus error usually related to unginment memory access. (NOT relevant)
  */
 
+#include "IOUtils.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,8 +22,14 @@
 
 #include <fcntl.h>
 
+#include <thread>
+#include <vector>
+
 #define MAXLEN 128
 #define PAGESIZE 4096 
+
+using namespace std;
+using namespace ioutils;
 
 typedef struct MData {
 	long length;
@@ -89,4 +97,43 @@ int main()
 	} else {
 		printf("mmap file without page alignment will succeed, offset: %d\n", 12);
 	}
+}
+
+void
+ThreadRunner(TaskStruct *task, int threadsn, IOStatistics *stat, PerfTester *tester)
+{ 
+	// open file;
+	const char* dir = "/home/wy/matrixdb/contrib/mars3/moduletest/data/mars3_100_";
+	const int filenr = 10;
+	int sn = std::rand() % 10 + 1;
+	
+	char filename[1024];
+	snprintf(filename, 1024, "%s%d.dat");
+
+		
+	// mmap loop;
+}
+
+using ThreadFunc = std::function<void(int)>;
+
+void Test(int threads)
+{
+	using namespace std::placeholders;
+
+	vector<std::thread *> threads;
+	for (int thdsn = 1; thdsn <= threadnr; thdsn++) {
+		TaskStruct *task = tasks[thdsn - 1];
+		ThreadFunc runner = std::bind(ThreadRunner, _1);
+		std::thread *thd = new std::thread(runner, thdsn);
+		threads.push_back(thd);
+	}
+
+	for (int thdsn = 1; thdsn <= threadnr; thdsn++) {
+		threads[thdsn - 1]->join();
+	}
+}
+
+int main() 
+{
+	Test(100);
 }
