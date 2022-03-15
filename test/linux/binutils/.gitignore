@@ -1,0 +1,4 @@
+full.obj
+pg_checksum_block.dis
+pg_checksum_block_new.dis
+rawpage.o
