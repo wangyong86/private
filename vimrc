@@ -40,6 +40,11 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 " different version somewhere else.
 " Plugin 'ascenator/L9', {'name': 'newL9'}
 
+Plugin 'masukomi/vim-markdown-folding', { 'for': 'markdown' }
+
+Plugin 'godlygeek/tabular'
+Plugin 'preservim/vim-markdown'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 
@@ -64,6 +69,7 @@ set number
 
 " shift width, tab stop width
 set ts=4 sw=4
+set expandtab
 
 set noet
 
