@@ -1,5 +1,10 @@
 " ========================== BEGIN settingn for Vundle
 set nocompatible
+
+" backspace delete char
+set backspace=indent,eol,start
+
+" disable auto indent and filetype related plugin
 filetype off
 
 if has('python3')
