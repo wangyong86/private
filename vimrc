@@ -74,9 +74,9 @@ set number
 
 " shift width, tab stop width
 set ts=4 sw=4
-set expandtab
+set et
 
-set noet
+"set noet
 
 " auto indent using 4 spaces
 set autoindent
@@ -94,6 +94,9 @@ filetype on
 
 " highlight synatx
 syntax on
+
+" highlight current line
+set cursorline
 
 " don't add style automatically
 set paste "unpaste
