@@ -52,7 +52,7 @@ if [ "$1" == "-d" ]; then
 
 		# regression test mode: 3 segment, 3 mirror
 		if [ "$2" == "-t" ]; then 
-    		make create-demo-cluster PORT_BASE=$baseport && createdb t
+    		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=16 && createdb t
 		elif [ "$2" == "-f" ]; then  #fast mode
     		make create-demo-cluster PORT_BASE=$baseport WITH_MIRRORS=false && createdb t
 		else
@@ -112,8 +112,11 @@ if [ "$1" == "-c" ]; then
 	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
     #CFLAGS='-O0 -g3 -msse4.1 -funroll-loops -ftree-vectorize' CXXFLAGS='-O0 -g3 -msse4.1 -funroll-loops -ftree-vectorize' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     #CFLAGS='-O3 -g3 -march=native' CXXFLAGS='-O3 -g3 -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
+    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --prefix=$OLDGPHOME
+    CFLAGS='-O3 -g3' CXXFLAGS='-O3 -g3' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
+    #CFLAGS='-O3 -march=native -g3' CXXFLAGS='-O3 -march=native -g3' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
+    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     #./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-depend --prefix=$OLDGPHOME
     #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-depend --prefix=$OLDGPHOME
