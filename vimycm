@@ -26,3 +26,5 @@ let g:ycm_use_completion_api = 1
 let g:ycm_min_num_of_chars_for_completion = 99
 let g:ycm_clangd_args=['--header-insertion=never']
 let g:ycm_always_populate_location_list = 1
+
+set et

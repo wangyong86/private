@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+shopt -s expand_aliases
+
+pid=`ps -ef|grep postgres|grep $USER|grep idle|awk '{print $2}'`
+
+gdb -p $pid

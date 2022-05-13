@@ -4,7 +4,7 @@ if [ $# -eq 0 ]; then
 fi
 
 if [ "$1" == "-i" ]; then
-    ps -ef|grep postgres|grep $USER|grep idle | grep seg
+    ps -ef|grep postgres|grep $USER|grep idle
 fi
 
 if [ "$1" == "-d" ]; then
