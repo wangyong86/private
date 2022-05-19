@@ -156,8 +156,12 @@ if has("cscope")
 	set csto=1   " search tags first
 	"set cst 	" use :cs find g, not :tag which is defalut
 	set nocscopeverbose " not show cscope db add info
-	if filereadable("/home/wy/matrixdb/cscope.out")
-		cs add /home/wy/matrixdb/cscope.out
+	if filereadable("./cscope.out")
+		cs add ./cscope.out
+    else
+        if filereadable("/home/wy/matrixdb/cscope.out")
+            cs add /home/wy/matrixdb/cscope.out
+        endif
 	endif
 endif
 
