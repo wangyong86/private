@@ -37,7 +37,8 @@ else	FLAGS="-dt"
 fi
 
 # this is outputting the tags into the file 'tags', and appending
-find `pwd`/ -type f -name '*.[chyl]' -o -name '*.cc' -o -name "*.[ch]pp" | \
+find `pwd`/ -type f -name '*.[chyl]' -o -name '*.cc' -o -name "*.[ch]pp" \
+    -o -name "*.go" | \
 	grep -v test|grep -v mock | xargs ctags -a -f tags "$FLAGS"
 
 # Exuberant tags has a header that we cannot sort in with the other entries

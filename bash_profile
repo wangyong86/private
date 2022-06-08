@@ -51,7 +51,6 @@ export LC_ALL=en_US.UTF-8
 export CLICKSRC=~/ClickHouse
 export GPDEMO=$GPSRC/gpAux/gpdemo/
 export LLVM=/home/wy/llvm-project
-export DD=$GPDEMO/datadirs
 export RTPATH=$GPSRC/src/test/regress
 export CPATH=$GPSRC/contrib
 export TSBS=/home/wy/tsbs
@@ -89,30 +88,37 @@ alias ctor="cd $GPSRC/src/backend/executor/"
 alias access="cd $GPSRC/src/backend/access/"
 alias cdb="cd $GPSRC/src/include/cdb/"
 alias ctlg="cd $GPSRC/src/backend/catalog"
-
-# matrixdb path
-alias gpdb="cd $GPHOME/bin/"
-alias dd="cd $DD"
-alias vec="cd $GPSRC/contrib/mxvector/mxvector"
-alias sf="cd $GPSRC/src/backend/utils/matrixdb/superfast/superfast"
-alias mars="cd $CPATH/mars"
-alias mars3="sf; cd ../mars3"
-alias mars3am="access; cd mars3"
-#alias mars3="cd $CPATH/mars3/superfast/mars3"
-alias lb="cd $CPATH/mars3/superfast/loadbench"
 alias mts="cd $GPSRC/contrib/matrixts"
 alias cv="cd $GPSRC/contrib/matrixts/continuous_view"
-alias st="cd $GPSRC/src/backend/access/sortheap"
+alias st="access; cd sortheap"
+alias ao="access; cd appendonly"
+alias aocs="access; cd aocs"
+
+# mars3 & vectorization
+alias vec="cd $GPSRC/contrib/mxvector/mxvector"
+alias mars="cd $CPATH/mars"
+alias mts="cd $CPATH/matrixts"
+alias mars3am="access; cd mars3"
 alias rt="cd $RTPATH"
+
+#superfast
+export DD=$GPDEMO/datadirs
+alias sf="cd $GPSRC/src/backend/utils/matrixdb/superfast/superfast"
+alias codec="sf;cd codec"
+alias mars3="sf; cd ../mars3"
+alias lb="sf; cd ../loadbench"
+
+#database instance
+alias gpdb="cd $GPHOME/bin/"
+alias db1="cd $DD/dbfast1/demoDataDir0/base"
+alias log1="cd $DD/dbfast1/demoDataDir0/log"
+alias qd="cd $DD/qddir/demoDataDir-1/base"
+alias logd="cd $DD/qddir/demoDataDir-1/log"
 
 # third party path
 alias os="cd ~/opensource"
 alias ck="cd $CLICKSRC"
 alias tsbs="cd /home/wy/tsbs"
-alias db1="cd $DD/dbfast1/demoDataDir0/base"
-alias log1="cd $DD/dbfast1/demoDataDir0/log"
-alias qd="cd $DD/qddir/demoDataDir-1/base"
-alias logd="cd $DD/qddir/demoDataDir-1/log"
 alias libc="cd ~/opensource/glibc"
 alias folly="cd ~/opensource/folly/folly"
 alias kernel="cd ~/opensource/kernel"
