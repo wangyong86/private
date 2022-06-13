@@ -52,7 +52,7 @@ if [ "$1" == "-d" ]; then
 
 		# regression test mode: 3 segment, 3 mirror
 		if [ "$2" == "-t" ]; then 
-    		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=16 && createdb t
+    		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=3 && createdb t
 		elif [ "$2" == "-f" ]; then  #fast mode
     		make create-demo-cluster PORT_BASE=$baseport WITH_MIRRORS=false && createdb t
 		else
