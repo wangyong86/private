@@ -72,8 +72,8 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_
 # tool modify
 alias tmux="tmux -u -2"
 alias gti="git"
-alias vim="$VIMDIR/bin/vim -O"
-alias vi="$VIMDIR/bin/vim"
+#alias vim="$VIMDIR/bin/vim -O"
+#alias vi="$VIMDIR/bin/vim"
 alias gdb="gdb -q"
 alias srb="source ~/.bash_profile"
 

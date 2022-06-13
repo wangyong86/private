@@ -36,7 +36,7 @@ Plugin 'tpope/vim-fugitive'
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
 " Git plugin not hosted on GitHub
-Plugin 'git://git.wincent.com/command-t.git'
+" Plugin 'git://git.wincent.com/command-t.git'
 
 " git repos on your local machine (i.e. when working on your own plugin)
 " Plugin 'file:///home/gmarik/path/to/plugin'
@@ -149,7 +149,7 @@ let Tlist_WinWidth=40
 map <C-p> <Esc>:TlistToggle<Cr>
 
 "cctree and default hotkey, Ref: https://sites.google.com/site/vimcctree/faq
-autocmd vimenter * if filereadable('/home/wy/matrixdb/cscope.out') | CCTreeLoadDB /home/wy/matrixdb/cscope.out | endif
+"autocmd vimenter * if filereadable('/home/wy/matrixdb/cscope.out') | CCTreeLoadDB /home/wy/matrixdb/cscope.out | endif
 "   g:CCTreeKeyTraceForwardTree = '<C-\>>'
 "   g:CCTreeKeyTraceReverseTree = '<C-\><'
 "   g:CCTreeKeyHilightTree = '<C-l>'

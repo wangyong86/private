@@ -27,4 +27,4 @@
 [url "ssh://git@github.com/"]
 	insteadOf = https://github.com/
 [core]
-	editor = /home/wy/vim/bin/vim
+	editor = /usr/bin/vim
