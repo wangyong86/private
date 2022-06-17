@@ -107,6 +107,7 @@ export DD=$GPDEMO/datadirs
 alias sf="cd $GPSRC/src/backend/utils/matrixdb/superfast/superfast"
 alias codec="sf;cd codec"
 alias mars3="sf; cd ../mars3"
+alias ms="sf; cd ../tools/mars3-merge-server"
 alias lb="sf; cd ../loadbench"
 
 #database instance
