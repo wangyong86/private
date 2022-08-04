@@ -15,6 +15,17 @@
     if (cond) \
         fprintf(stderr, #level": " fmt "\n", __VA_ARGS__);
 
+#define hehe(x,y) wx##y
+
+
+char string[] = "hello world!\n";
+
+printf("%s",hehe(str,ing));
+
+return 0;
+
+}
+
 int main(int argc, char * argv[])
 {
 	LOG(1, LOG, "int: %d", 10);
