@@ -55,7 +55,12 @@ export RTPATH=$GPSRC/src/test/regress
 export CPATH=$GPSRC/contrib
 export TSBS=/home/wy/tsbs
 export FAST=/home/wy/superfast
-export VIMDIR=/home/wy/vim
+
+if [ -d /home/wy/vim ]; then
+    export VIMDIR=/home/wy/vim
+else
+    export VIMDIR=/usr
+fi
 
 export PATH=/opt/MegaRAID/MegaCli/:$HOME/install/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_CONFIG_PATH

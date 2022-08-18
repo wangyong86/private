@@ -18,5 +18,11 @@ function restore_shallow()
 
 if [ $# = 0 ]; then
 	restore_shallow
+
+    # Take new config effective
+    source ~/.bash_profile
+
+    # install vundle
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 	exit 0
 fi

@@ -11,6 +11,8 @@ if has('python3')
 endif
 
 " set the runtime path to include Vundle and initialize
+" Vundle install: git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " alternatively, pass a path where Vundle should install plugins
@@ -23,7 +25,8 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'morhetz/gruvbox'
 
 " detailed intro: https://www.jianshu.com/p/27d7fbd6cdc6
-Plugin 'Valloric/YouCompleteMe'
+" YCM installation is complex on older platform, disable for now
+" Plugin 'Valloric/YouCompleteMe'
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -68,7 +71,9 @@ filetype plugin indent on    " required
 " ========================== END settingn for Vundle
 
 " detailed:https://github.com/morhetz/gruvbox/wiki/
-autocmd vimenter * ++nested colorscheme gruvbox
+" autocmd vimenter * ++nested colorscheme gruvbox
+" We should use the upper cmdline, but for lower version of vim, just use:
+colorscheme gruvbox
 
 set number
 
