@@ -24,5 +24,8 @@ if [ $# = 0 ]; then
 
     # install vundle
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+    git clone git@github.com:egel/tmux-gruvbox.git
+
 	exit 0
 fi
