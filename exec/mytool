@@ -46,21 +46,28 @@ fi
 
 #create demo-cluster simple
 baseport=5658
+segnum=8
 if [ "$1" == "-d" ]; then
     cd $GPSRC
 	if [ $# -eq 2 ]; then
 
 		# regression test mode: 3 segment, 3 mirror
 		if [ "$2" == "-t" ]; then 
-    		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=16 && createdb t
+    		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=$segnum
 		elif [ "$2" == "-f" ]; then  #fast mode
-    		make create-demo-cluster PORT_BASE=$baseport WITH_MIRRORS=false && createdb t
+    		make create-demo-cluster PORT_BASE=$baseport WITH_MIRRORS=false
 		else
 			echo "unsupported parameters:" $@
 		fi
 	else # debug mode
-    	make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false && createdb t
+    	make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=1 WITH_MIRRORS=false
 	fi
+
+    if [ $? == 1 ]; then
+        exit
+    fi
+
+    createdb t
 	gpconfig -c gp_vmem_idle_resource_timeout -v 0
 	gpconfig -c enable_parallel_mode -v off 
 	gpstop -u
@@ -102,34 +109,35 @@ if [ "$1" == "-w" ]; then
 	if [ $host == "wydev" ]; then
 		parallel=8
 	fi
-	code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qa && mytool -d 
+	code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qar
 	#code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qa && mytool -d 
 fi
 
 OLDGPHOME=/home/wy/gpdb
 if [ "$1" == "-c" ]; then
 	code
-	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
-    #CFLAGS='-O0 -g3 -msse4.1 -funroll-loops -ftree-vectorize' CXXFLAGS='-O0 -g3 -msse4.1 -funroll-loops -ftree-vectorize' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
-    #CFLAGS='-O3 -g3 -march=native' CXXFLAGS='-O3 -g3 -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    #CFLAGS='-O3 -g3 -march=native' CXXFLAGS='-O3 -g3 -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --prefix=${OLDGPHOME} --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce -enable-orafce --enable-ic-proxy --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions
-    #CFLAGS="-O0 -g3 -fdiagnostics-color=always" CXXFLAGS="-O0 -g3 -fdiagnostics-color=always" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions
-    CFLAGS="-O0 -g3" CXXFLAGS="-O0 -g3" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions --enable-mxvector --enable-depend
-    #CFLAGS="-O0 -g3" CXXFLAGS="-O0 -g3" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --enable-mxvector --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions --with-llvm
-#CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    CFLAGS='-O3 -g3 -march=native' CXXFLAGS='-O3 -g3 -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --prefix=$OLDGPHOME
-    #CFLAGS='-O3 -march=native -g3' CXXFLAGS='-O3 -march=native -g3' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mars3 --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
-    #./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-depend --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-depend --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --enable-dtrace --prefix=$OLDGPHOME
+    #simple perf mode
+    CFLAGS='-O3 -g -march=native' CXXFLAGS='-O3 -g -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
 
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --prefix=$OLDGPHOME
-    #CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
+    #CFLAGS='-O0 -g -msse4.1 -funroll-loops -ftree-vectorize' CXXFLAGS='-O0 -g -msse4.1 -funroll-loops -ftree-vectorize' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
+    #CFLAGS="-O0 -g" CXXFLAGS="-O0 -g" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --enable-mxvector --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions
+
+	#disable orca to reduce memory usage for single segment server. specifically, gp_vmem_protect_limit
+    #CFLAGS='-O0 -g' CXXFLAGS='-O0 -g' ./configure --prefix=${OLDGPHOME} --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce -enable-orafce --enable-ic-proxy --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions
+
+    #align pr pipeline, with/out mxv, debug mode
+    #CFLAGS="-O0 -g -fdiagnostics-color=always" CXXFLAGS="-O0 -g -fdiagnostics-color=always" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions
+    #CFLAGS="-O0 -g" CXXFLAGS="-O0 -g" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions --enable-mxvector --enable-depend
+
+    #llvm?
+    #CFLAGS="-O0 -g" CXXFLAGS="-O0 -g" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --enable-mxvector --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions --with-llvm
+
+    #open dtrace
+    #CFLAGS='-O0 -g' CXXFLAGS='-O0 -g' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --enable-dtrace --prefix=$OLDGPHOME
+
+    #CFLAGS='-O0 -g' CXXFLAGS='-O0 -g' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --prefix=$OLDGPHOME
+
+    #CFLAGS='-O0 -g' CXXFLAGS='-O0 -g' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
 	cd -
     echo "config matrixdb finished"
 fi
