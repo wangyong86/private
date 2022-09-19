@@ -1,0 +1,2 @@
+# cherry-pick from another repo
+git --git-dir=<path_to_old_repo>/.git format-patch -k -1 --stdout <sha_of_commit> | git am -3 -k
