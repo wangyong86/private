@@ -4,7 +4,7 @@ OBJS += macro externc linecross ctor desinatorlist nestvec builtin bitfield
 OBJS += numeric static_inherit
 
 CXX=g++
-CPPFLAG+= -std=c++20
+CPPFLAG+= -std=c++20 -g -O0
 
 OBJS+=concept
 
