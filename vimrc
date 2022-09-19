@@ -136,6 +136,10 @@ set hlsearch
 " enable mouse
 set mouse=a
 
+" Install taglist 
+" 1) w3m https://www.vim.org/scripts/download_script.php?src_id=19574 #may changed
+" 2) decompress in ~/.vim/
+ 
 " open/close taglsit using f1/esc"
 let Tlist_Use_SingleClick=1 " enable mouse single click
 let Tlist_Show_One_File=1   " only display current file
