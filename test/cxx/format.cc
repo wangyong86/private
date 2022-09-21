@@ -5,8 +5,14 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+
+void cformat()
+{
+    // printf
+    printf("The hexdecimal of 100 is: %010x\n", 100);
+}
  
-int main()
+void cplusplusformat()
 {
     auto str_time = [](int year, int mon, int day)
     {
@@ -82,4 +88,9 @@ int main()
     for (auto const &entry : data)
         print_line(entry);
     print_break();
+}
+
+int main()
+{
+    cformat();
 }
