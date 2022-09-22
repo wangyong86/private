@@ -50,8 +50,13 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 
 Plugin 'masukomi/vim-markdown-folding', { 'for': 'markdown' }
 
+" Syntax highlight of markdown
 Plugin 'godlygeek/tabular'
 Plugin 'preservim/vim-markdown'
+
+" realtime mardown, use together with browser, disable it
+" Plugin 'kannokanno/previm'
+" Plugin 'tyru/open-browser.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -188,3 +193,6 @@ nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
 nmap <C-\>f :cs find f <C-R>=expand("<cword>")<CR><CR>
 nmap <C-\>i :cs find i <C-R>=expand("<cword>")<CR><CR>
 nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+
+" Other useful index
+" markdown syntax: https://markdown.com.cn/basic-syntax/emphasis.html
