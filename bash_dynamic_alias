@@ -39,3 +39,5 @@ alias db1="cd $DD/dbfast1/demoDataDir0/base"
 alias log1="cd $DD/dbfast1/demoDataDir0/log"
 alias qd="cd $DD/qddir/demoDataDir-1/base"
 alias logd="cd $DD/qddir/demoDataDir-1/log"
+
+alias upsql="PGOPTIONS='-c gp_role=utility' psql"
