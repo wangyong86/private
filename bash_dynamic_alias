@@ -27,7 +27,7 @@ else
     export DD=$MASTER_DATADIR/datadirs
 fi
 
-alias sf="mts;cd sortheap"
+alias vsf="vec;cd ../superfast/superfast"
 alias codec="mts;cd codec"
 alias mars3="sf; cd ../mars3"
 alias ms="sf; cd ../tools/mars3-merge-server"
