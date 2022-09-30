@@ -85,42 +85,6 @@ alias vt="vi ~/private/exec/mytool"
 alias ppi="pp -i"
 alias ppd="pp -d"
 
-# source coce path
-alias code="cd $GPSRC"
-alias fast="cd $FAST"
-alias plan="cd $GPSRC/src/backend/optimizer/plan/"
-alias ctor="cd $GPSRC/src/backend/executor/"
-alias access="cd $GPSRC/src/backend/access/"
-alias cdb="cd $GPSRC/src/include/cdb/"
-alias ctlg="cd $GPSRC/src/backend/catalog"
-alias madmin="cd $GPSRC/src/backend/utils/mx"
-alias mts="cd $GPSRC/contrib/matrixts"
-alias cv="cd $GPSRC/contrib/matrixts/continuous_view"
-alias st="access; cd sortheap"
-alias ao="access; cd appendonly"
-alias aocs="access; cd aocs"
-
-# mars3 & vectorization
-alias vec="cd $GPSRC/contrib/mxvector/mxvector"
-alias mars="cd $CPATH/mars"
-alias mts="cd $CPATH/matrixts"
-alias mars3am="access; cd mars3"
-alias rt="cd $RTPATH"
-
-#superfast
-export DD=$GPDEMO/datadirs
-alias sf="cd $GPSRC/src/backend/utils/matrixdb/superfast/superfast"
-alias codec="sf;cd codec"
-alias mars3="sf; cd ../mars3"
-alias ms="sf; cd ../tools/mars3-merge-server"
-alias lb="sf; cd ../loadbench"
-
-#database instance
-alias gpdb="cd $GPHOME/bin/"
-alias db1="cd $DD/dbfast1/demoDataDir0/base"
-alias log1="cd $DD/dbfast1/demoDataDir0/log"
-alias qd="cd $DD/qddir/demoDataDir-1/base"
-alias logd="cd $DD/qddir/demoDataDir-1/log"
 
 # third party path
 alias os="cd ~/opensource"
@@ -130,6 +94,7 @@ alias libc="cd ~/opensource/glibc"
 alias folly="cd ~/opensource/folly/folly"
 alias kernel="cd ~/opensource/kernel"
 
+source ~/private/bash_dynamic_alias
 #temporary path
 alias lx="cd ~/lxdev4"
 
