@@ -21,7 +21,12 @@ alias mars3am="access; cd mars3"
 alias rt="cd $RTPATH"
 
 #superfast
-export DD=$GPDEMO/datadirs
+if [ a$MASTER_DATADIR == "a" ]; then
+    export DD=$GPDEMO/datadirs
+else
+    export DD=$MASTER_DATADIR/datadirs
+fi
+
 alias sf="cd $GPSRC/src/backend/utils/matrixdb/superfast/superfast"
 alias codec="sf;cd codec"
 alias mars3="sf; cd ../mars3"
