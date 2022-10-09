@@ -1,7 +1,12 @@
 #!/bin/env bash
 
 #democluster location
-target=/home/wy
+if [ "x"$MASTER_DATADIR = "x" ]; then
+    target=/home/wy
+else
+    target=$MASTER_DATADIR
+fi
+
 corepattern="core.[0-9]*"
 #target=/home/wy/matrixdb
 
