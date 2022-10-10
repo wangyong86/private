@@ -1,23 +1,21 @@
 # source coce path
+CONTRIB=$GPSRC/contrib
+BE=$GPSRC/src/backend
+INC=$GPSRC/src/include
 alias code="cd $GPSRC"
-alias fast="cd $FAST"
-alias plan="cd $GPSRC/src/backend/optimizer/plan/"
-alias ctor="cd $GPSRC/src/backend/executor/"
-alias access="cd $GPSRC/src/backend/access/"
-alias cdb="cd $GPSRC/src/include/cdb/"
-alias ctlg="cd $GPSRC/src/backend/catalog"
-alias madmin="cd $GPSRC/src/backend/utils/mx"
-alias mts="cd $GPSRC/contrib/matrixts"
-alias cv="cd $GPSRC/contrib/matrixts/continuous_view"
+alias plan="cd $BE/optimizer/plan/"
+alias etor="cd $BE/executor/"
+alias access="cd $BE/access/"
+alias cdb="cd $INC/cdb/"
+alias ctlg="cd $BE/catalog"
+alias mts="cd $CONTRIB/matrixts"
+alias cv="mts; cd continuous_view"
 alias st="mts; cd sortheap"
 alias ao="access; cd appendonly"
 alias aocs="access; cd aocs"
 
-# mars3 & vectorization
-alias vec="cd $GPSRC/contrib/mxvector/mxvector"
-alias mars="cd $CPATH/mars"
-alias mts="cd $CPATH/matrixts"
-alias mars3am="access; cd mars3"
+# vectorization
+alias vec="cd $CONTRIB/mxvector/mxvector"
 alias rt="cd $RTPATH"
 
 #superfast
@@ -29,9 +27,14 @@ fi
 
 alias vsf="vec;cd ../superfast/superfast"
 alias codec="mts;cd codec"
-alias mars3="sf; cd ../mars3"
-alias ms="sf; cd ../tools/mars3-merge-server"
-alias lb="sf; cd ../loadbench"
+alias csf="codec; cd superfast"
+
+# Mars3 related
+#alias mars3="sf; cd ../mars3"
+#alias ms="sf; cd ../tools/mars3-merge-server"
+#alias lb="sf; cd ../loadbench"
+#alias madmin="cd $GPSRC/src/backend/utils/mx"
+#alias mars="cd $CPATH/mars"
 
 #database instance
 alias gpdb="cd $GPHOME/bin/"
