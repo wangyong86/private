@@ -1,0 +1,11 @@
+
+\set v_vin random(1, 5000)
+
+select
+t1.c1,t1.c2,t1.c3,t1.c4,t1.c5,t1.c6,t1.c7,t1.c8,t1.c9,t1.c10,t1.c11,t1.c12,t1.c13,t1.c14,t1.c15,t1.c16,t1.c17,t1.c18,t1.c19,t1.c20,t1.c21,t1.c22,t1.c23,t1.c24,t1.c25,t1.c26,t1.c27,t1.c28,t1.c29,t1.c30,t1.c31,t1.c32,t1.c33,t1.c34,t1.c35,t1.c36,t1.c37,t1.c38,t1.c39,t1.c40, t2.*
+from st_signal_mars2 as t1, jsonb_to_record(t1.cg1) as t2 (c1 float,c2 float,c3 float,c4 float,c5 float,c6 float,c7 float,c8 float,c9 float,c10 float)
+where 1=1
+AND ts >= '2021-12-22 00:00:00'::timestamp AND ts < '2021-12-23 00:00:00'::timestamp
+--AND time_bucket('1h',ts) >= '2021-12-22 00:00:00'::timestamp --AND time_bucket('1h',ts) < '2021-12-23 00:00:00'::timestamp
+AND   vin ='DUMMY_DEVICE_'||:v_vin::text;
+

@@ -1,0 +1,10 @@
+
+\set v_vin random(1, 5000)
+
+SELECT * FROM signal_explore(
+  'public.st_signal_mars2',
+  'DUMMY_DEVICE_'||:v_vin::text,
+  '2021-12-22 18:30:00'::timestamp,
+  '2021-12-22 19:30:00'::timestamp,
+  ARRAY['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10']
+);

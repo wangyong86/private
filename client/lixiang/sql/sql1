@@ -1,0 +1,50 @@
+
+\set v_vin random(1, 5000)
+
+SELECT jsonb_pretty(json_build_object(
+        'code', 0,
+        'msg', 'Success',
+        'data', json_build_object(
+                'vinCode', vin,
+                'startTime', extract(epoch from '2021-12-22 18:30:00'::timestamp) * 1000,
+                'endTime', extract(epoch from '2021-12-22 19:30:00'::timestamp) * 1000
+            ),
+        'signals', ARRAY(
+                SELECT json_build_object('signalName', t.signame, 'dps', json_object(t.k, t.d))
+                FROM (
+                         SELECT t3 AS                                   signame,
+                                array_agg(extract(epoch from ts)::text) k,
+                                array_agg((t2.cg1 ->> "t3")::text)      d
+                         FROM (
+                                  SELECT *
+                                  FROM (VALUES ('c1001'),
+                                               ('c1002'),
+                                               ('c1003'),
+                                               ('c1004'),
+                                               ('c1005'),
+                                               ('c1006'),
+                                               ('c1007'),
+                                               ('c1008'),
+                                               ('c1009'),
+                                               ('c1010')) AS t(t3),
+                                       st_signal_mars2 z
+                                  WHERE z.vin = x.vin
+                                    AND z.vin = 'DUMMY_DEVICE_'||:v_vin::text
+                                    AND z.ts >= '2021-12-22 18:30:00'
+                                    AND z.ts < '2021-12-22 19:30:00'
+                                    --AND time_bucket('1h',z.ts) >= '2021-12-22 18:30:00'
+                                    --AND time_bucket('1h',z.ts) < '2021-12-22 19:30:00'
+                                    AND z.cg1 ->> "t3" is not null
+                                  ORDER BY z.ts
+                              ) t2
+                         GROUP BY t3
+                     ) t
+            )
+    )::jsonb)
+FROM st_signal_mars2 x
+WHERE ts >= '2021-12-22 18:30:00'
+  AND ts < '2021-12-22 19:30:00'
+  --AND time_bucket('1h',ts) >= '2021-12-22 18:30:00'
+  --AND time_bucket('1h',ts) < '2021-12-22 19:30:00'
+  AND vin = 'DUMMY_DEVICE_'||:v_vin::text
+GROUP BY vin;

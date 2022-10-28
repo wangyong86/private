@@ -1,0 +1,6 @@
+
+--方案3
+\set v_vin random(1, 5000)
+select max_ts from cv1 
+where vin ='DUMMY_DEVICE_'||:v_vin::text;
+

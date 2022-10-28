@@ -1,0 +1,11 @@
+
+\set v_vin random(1, 5000)
+
+select
+c1,c2,c3,c4,c5,c6,c7,c8,c9,c10
+from st_signal_mars2
+where 1=1
+AND ts >= '2021-12-22 18:30:00'::timestamp AND ts < '2021-12-22 19:30:00'::timestamp
+--AND time_bucket('1h',ts) >= '2021-12-22 18:30:00'::timestamp --AND time_bucket('1h',ts) < '2021-12-22 19:30:00'::timestamp
+AND   vin ='DUMMY_DEVICE_'||:v_vin::text;
+

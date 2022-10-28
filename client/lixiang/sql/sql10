@@ -1,0 +1,65 @@
+
+\set v_vin random(1, 5000)
+
+--  BCM_PowerMode
+SELECT * FROM (
+    SELECT vin, ts,
+        c201,
+        c201 - lead(c201) OVER (PARTITION BY vin ORDER BY ts) AS diff201_1,
+        c201 -  lag(c201) OVER (PARTITION BY vin ORDER BY ts) AS diff201_2,
+        c202,
+        c202 - lead(c202) OVER (PARTITION BY vin ORDER BY ts) AS diff202_1,
+        c202 -  lag(c202) OVER (PARTITION BY vin ORDER BY ts) AS diff202_2,
+        c203,
+        c203 - lead(c203) OVER (PARTITION BY vin ORDER BY ts) AS diff203_1,
+        c203 -  lag(c203) OVER (PARTITION BY vin ORDER BY ts) AS diff203_2,
+        c204,
+        c204 - lead(c204) OVER (PARTITION BY vin ORDER BY ts) AS diff204_1,
+        c204 -  lag(c204) OVER (PARTITION BY vin ORDER BY ts) AS diff204_2,
+        c205,
+        c205 - lead(c205) OVER (PARTITION BY vin ORDER BY ts) AS diff205_1,
+        c205 -  lag(c205) OVER (PARTITION BY vin ORDER BY ts) AS diff205_2,
+        c206,
+        c206 - lead(c206) OVER (PARTITION BY vin ORDER BY ts) AS diff206_1,
+        c206 -  lag(c206) OVER (PARTITION BY vin ORDER BY ts) AS diff206_2,
+        c207,
+        c207 - lead(c207) OVER (PARTITION BY vin ORDER BY ts) AS diff207_1,
+        c207 -  lag(c207) OVER (PARTITION BY vin ORDER BY ts) AS diff207_2,
+        c208,
+        c208 - lead(c208) OVER (PARTITION BY vin ORDER BY ts) AS diff208_1,
+        c208 -  lag(c208) OVER (PARTITION BY vin ORDER BY ts) AS diff208_2,
+        c209,
+        c209 - lead(c209) OVER (PARTITION BY vin ORDER BY ts) AS diff209_1,
+        c209 -  lag(c209) OVER (PARTITION BY vin ORDER BY ts) AS diff209_2,
+        c210,
+        c210 - lead(c210) OVER (PARTITION BY vin ORDER BY ts) AS diff210_1,
+        c210 -  lag(c210) OVER (PARTITION BY vin ORDER BY ts) AS diff210_2
+    FROM st_signal_mars2
+    WHERE vin ='DUMMY_DEVICE_'||:v_vin::text
+  AND ts >= '2021-12-22 19:30:00'
+  AND ts < '2021-12-22 19:30:00'::timestamp + '4 hour'::interval
+  --AND time_bucket('1h',ts) >= '2021-12-22 19:30:00'
+  --AND time_bucket('1h',ts) < '2021-12-22 19:30:00'::timestamp + '4 hour'::interval
+  AND c201 is not null
+  AND c202 is not null
+  AND c203 is not null
+  AND c204 is not null
+  AND c205 is not null
+  AND c206 is not null
+  AND c207 is not null
+  AND c208 is not null
+  AND c209 is not null
+  AND c210 is not null
+) ht 
+WHERE 1=1
+AND abs(diff201_1) > 0 OR abs(diff201_2) > 0
+or abs(diff202_1) > 0 OR abs(diff202_2) > 0
+or abs(diff203_1) > 0 OR abs(diff203_2) > 0
+or abs(diff204_1) > 0 OR abs(diff204_2) > 0
+or abs(diff205_1) > 0 OR abs(diff205_2) > 0
+or abs(diff206_1) > 0 OR abs(diff206_2) > 0
+or abs(diff207_1) > 0 OR abs(diff207_2) > 0
+or abs(diff208_1) > 0 OR abs(diff208_2) > 0
+or abs(diff209_1) > 0 OR abs(diff209_2) > 0
+or abs(diff210_1) > 0 OR abs(diff210_2) > 0
+ORDER BY vin, ts;

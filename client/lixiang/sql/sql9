@@ -1,0 +1,15 @@
+
+\set v_vin random(1, 5000)
+
+select 
+vin, time_bucket('1 second', ts) tb, 
+last_not_null_value(t1.c1,t1.ts) as c1,last_not_null_value(t1.c2,t1.ts) as c2,last_not_null_value(t1.c3,t1.ts) as c3,last_not_null_value(t1.c4,t1.ts) as c4,last_not_null_value(t1.c5,t1.ts) as c5,last_not_null_value(t1.c6,t1.ts) as c6,last_not_null_value(t1.c7,t1.ts) as c7,last_not_null_value(t1.c8,t1.ts) as c8,last_not_null_value(t1.c9,t1.ts) as c9,last_not_null_value(t1.c10,t1.ts) as c10,last_not_null_value(t1.c11,t1.ts) as c11,last_not_null_value(t1.c12,t1.ts) as c12,last_not_null_value(t1.c13,t1.ts) as c13,last_not_null_value(t1.c14,t1.ts) as c14,last_not_null_value(t1.c15,t1.ts) as c15,last_not_null_value(t1.c16,t1.ts) as c16,last_not_null_value(t1.c17,t1.ts) as c17,last_not_null_value(t1.c18,t1.ts) as c18,last_not_null_value(t1.c19,t1.ts) as c19,last_not_null_value(t1.c20,t1.ts) as c20,last_not_null_value(t1.c21,t1.ts) as c21,last_not_null_value(t1.c22,t1.ts) as c22,last_not_null_value(t1.c23,t1.ts) as c23,last_not_null_value(t1.c24,t1.ts) as c24,last_not_null_value(t1.c25,t1.ts) as c25,last_not_null_value(t1.c26,t1.ts) as c26,last_not_null_value(t1.c27,t1.ts) as c27,last_not_null_value(t1.c28,t1.ts) as c28,last_not_null_value(t1.c29,t1.ts) as c29,last_not_null_value(t1.c30,t1.ts) as c30,last_not_null_value(t1.c31,t1.ts) as c31,last_not_null_value(t1.c32,t1.ts) as c32,last_not_null_value(t1.c33,t1.ts) as c33,last_not_null_value(t1.c34,t1.ts) as c34,last_not_null_value(t1.c35,t1.ts) as c35,last_not_null_value(t1.c36,t1.ts) as c36,last_not_null_value(t1.c37,t1.ts) as c37,last_not_null_value(t1.c38,t1.ts) as c38,last_not_null_value(t1.c39,t1.ts) as c39,last_not_null_value(t1.c40,t1.ts) as c40,
+last_not_null_value(t2.c1001,t1.ts) as c1001,last_not_null_value(t2.c1002,t1.ts) as c1002,last_not_null_value(t2.c1003,t1.ts) as c1003,last_not_null_value(t2.c1004,t1.ts) as c1004,last_not_null_value(t2.c1005,t1.ts) as c1005,last_not_null_value(t2.c1006,t1.ts) as c1006,last_not_null_value(t2.c1007,t1.ts) as c1007,last_not_null_value(t2.c1008,t1.ts) as c1008,last_not_null_value(t2.c1009,t1.ts) as c1009,last_not_null_value(t2.c1010,t1.ts) as c1010
+
+from st_signal_mars2 t1, jsonb_to_record(t1.cg1) as t2 (c1001 float,c1002 float,c1003 float,c1004 float,c1005 float,c1006 float,c1007 float,c1008 float,c1009 float,c1010 float)
+where vin = 'DUMMY_DEVICE_'||:v_vin::text 
+AND ts >= '2021-12-22 00:00:00'::timestamp AND ts < '2021-12-22 00:30:00'::timestamp
+--AND time_bucket('1h',ts) >= '2021-12-22 00:00:00'::timestamp --AND time_bucket('1h',ts) < '2021-12-22 00:30:00'::timestamp
+group by vin, tb
+order by tb;
+
