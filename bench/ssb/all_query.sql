@@ -1,3 +1,5 @@
+-- for MatrixDB
+
 \timing on
 \o query.log
 
@@ -30,7 +32,7 @@ select sum(lo_extendedprice * lo_discount) as revenue
 
 ---Q2.1
 select sum(lo_revenue)
-     , time_bucket('365 day', lo_orderdate) as year
+     , date_part('year', lo_orderdate) as year
      , p_brand
   from mars3_enum
  where p_category = 'MFGR#12'
@@ -43,7 +45,7 @@ select sum(lo_revenue)
 
 ---Q2.2
 select sum(lo_revenue)
-     , time_bucket('365 day', lo_orderdate) as year
+     , date_part('year', lo_orderdate) as year
      , p_brand
   from mars3_enum
  where p_brand >= 'MFGR#2221'
@@ -57,7 +59,7 @@ select sum(lo_revenue)
 
 ---Q2.3
 select sum(lo_revenue)
-     , time_bucket('365 day', lo_orderdate) as year
+     , date_part('year', lo_orderdate) as year
      , p_brand
   from mars3_enum
  where p_brand = 'MFGR#2239'
@@ -71,7 +73,7 @@ select sum(lo_revenue)
 ---Q3.1
 select c_nation
      , s_nation
-     , time_bucket('365 day', lo_orderdate) as year
+     , date_part('year', lo_orderdate) as year
      , sum(lo_revenue) as revenue
   from mars3_enum
  where c_region = 'ASIA'
@@ -88,7 +90,7 @@ select c_nation
 ---Q3.2
 select c_city
      , s_city
-     , time_bucket('365 day', lo_orderdate) as year
+     , date_part('year', lo_orderdate) as year
      , sum(lo_revenue) as revenue
   from mars3_enum
  where c_nation = 'UNITED STATES'
@@ -105,7 +107,7 @@ select c_city
 ---Q3.3
 select c_city
      , s_city
-     , time_bucket('365 day', lo_orderdate) as year
+     , date_part('year', lo_orderdate) as year
      , sum(lo_revenue) as revenue
   from mars3_enum
  where c_city in ('UNITED KI1', 'UNITED KI5')
@@ -122,7 +124,7 @@ select c_city
 ---Q3.4
 select c_city
      , s_city
-     , time_bucket('365 day', lo_orderdate) as year
+     , date_part('year', lo_orderdate) as year
      , sum(lo_revenue) as revenue
   from mars3_enum
  where c_city in ('UNITED KI1', 'UNITED KI5')
@@ -137,7 +139,7 @@ select c_city
 ;
 
 ---Q4.1
-select time_bucket('365 day', lo_orderdate) as year
+select date_part('year', lo_orderdate) as year
      , c_nation
      , sum(lo_revenue - lo_supplycost) as profit
   from mars3_enum
@@ -151,7 +153,7 @@ select time_bucket('365 day', lo_orderdate) as year
 ;
 
 ---Q4.2
-select time_bucket('365 day', lo_orderdate) as year
+select date_part('year', lo_orderdate) as year
      , c_nation
      , p_category
      , sum(lo_revenue - lo_supplycost) as profit
@@ -170,7 +172,7 @@ select time_bucket('365 day', lo_orderdate) as year
 ;
 
 ---Q4.3
-select time_bucket('365 day', lo_orderdate) as year
+select date_part('year', lo_orderdate) as year
      , s_city
      , p_brand
      , sum(lo_revenue - lo_supplycost) as profit

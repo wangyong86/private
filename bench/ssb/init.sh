@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-gpconfig -c shared_preload_libraries -v "matrixts,matrixmgr,matrixgate,telemetry,mars,mxvector"
-gpstop -rqai
-
-gpconfig -c matrix.enable_mxvector -v true
-
+gpconfig -c shared_preload_libraries -v "matrixts,matrixmgr,matrixgate,telemetry,mxvector"
 gpstop -rqai
 
 createdb ssb
