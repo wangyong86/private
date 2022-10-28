@@ -1,0 +1,37 @@
+\set tname encode_51
+--\set tname encode_51_t1
+--\set EXPLAIN explain(analyze)
+\set EXPLAIN explain(analyze,verbose)
+--\set EXPLAIN
+\set EXPLAIN_ANALYZE :EXPLAIN
+
+set matrix.enable_mxvector=on;
+set enable_indexscan=off;
+set enable_parallel_mode=off;
+set max_parallel_workers_per_gather=3;
+set gp_enable_minmax_optimization=off;
+set matrix.enable_mxv_append=off;
+set matrix.enable_mxv_hash_aggregate=off;
+
+--startup parameter
+set gp_vmem_idle_resource_timeout=0;
+--set gp_cached_segworkers_threshold=32;
+--set matrix.disable_fast_lz4_decomp=false;
+--set matrix.fast_lz4_decomp_blksz=4;
+set gp_enable_explain_allstat=on;
+set statement_mem='512MB';
+--set work_mem='512MB';
+--set shared_buffers='4GB';
+--set max_statement_mem='5GB';
+--\o query.log
+\timing
+
+--set gp_interconnect_queue_depth=16;
+--set gp_interconnect_snd_queue_depth=16;
+--set gp_log_interconnect to debug;
+--set gp_max_packet_size to 16384;
+--set enable_parallel_mode=off;
+
+
+-- repeat
+\set sqlfile mxdb-21.sql

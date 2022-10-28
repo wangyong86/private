@@ -1,0 +1,20 @@
+--\pset tuples_only
+
+select :'EXPLAIN_ANALYZE' as explain, :'tname' as table;
+show matrix.enable_mxvector;
+show enable_parallel_mode;
+show max_parallel_workers_per_gather;
+show matrix.enable_mxv_hash_aggregate;
+show enable_indexscan;
+show gp_enable_minmax_optimization;
+show matrix.enable_mxv_append;
+show gp_vmem_idle_resource_timeout;
+show gp_vmem_protect_limit;
+show statement_mem;
+show max_statement_mem;
+show work_mem;
+show shared_buffers;
+show gp_interconnect_queue_depth;
+show gp_interconnect_snd_queue_depth;
+show gp_max_packet_size;
+show gp_interconnect_type;
