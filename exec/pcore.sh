@@ -7,7 +7,7 @@ else
     target=$MASTER_DATADIR
 fi
 
-corepattern="core.[0-9]*"
+corepattern="core*[0-9]*"
 #target=/home/wy/matrixdb
 
 find $target -name "$corepattern" -exec ls -lh {} +
