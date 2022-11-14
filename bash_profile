@@ -4,8 +4,12 @@ if [ -f ~/.bashrc ]; then
     . ~/.bashrc
 fi
 
-#use gcc-7 as default compiler
-if [ -f /opt/rh/devtoolset-7/enable ]; then
+#use gcc as high as possible, gcc7 is smallest one
+if [ -f /opt/rh/devtoolset-11/enable ]; then
+	source /opt/rh/devtoolset-11/enable
+elif [ -f /opt/rh/devtoolset-10/enable ]; then
+	source /opt/rh/devtoolset-10/enable
+elif [ -f /opt/rh/devtoolset-7/enable ]; then
 	source /opt/rh/devtoolset-7/enable
 fi
 
