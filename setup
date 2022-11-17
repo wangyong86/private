@@ -27,5 +27,7 @@ if [ $# = 0 ]; then
 
     git clone git@github.com:egel/tmux-gruvbox.git
 
+    # pg formatter
+    git clone git@github.com:darold/pgFormatter.git 
 	exit 0
 fi
