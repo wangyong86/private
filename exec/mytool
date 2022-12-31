@@ -117,7 +117,8 @@ OLDGPHOME=/home/wy/gpdb
 if [ "$1" == "-c" ]; then
 	code
     #simple perf mode
-    CFLAGS='-O3 -g -march=native' CXXFLAGS='-O3 -g -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
+    #CFLAGS='-O3 -g -march=native' CXXFLAGS='-O3 -g -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
+    CFLAGS='-O0 -g -march=native' CXXFLAGS='-O0 -g -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
 
     #CFLAGS='-O0 -g -msse4.1 -funroll-loops -ftree-vectorize' CXXFLAGS='-O0 -g -msse4.1 -funroll-loops -ftree-vectorize' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     #CFLAGS="-O0 -g" CXXFLAGS="-O0 -g" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --enable-mxvector --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions

@@ -1,6 +1,5 @@
 #!/bin/env bash
 
-#democluster location
 if [ "x"$MASTER_DATADIR = "x" ]; then
     target=/home/wy
 else
