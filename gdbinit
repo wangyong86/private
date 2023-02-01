@@ -11,3 +11,6 @@ set print pretty on
 
 # ignore signal, may use noprint option
 handle SIGUSR1 nostop
+
+source ~/private/utility/plist.py
+
