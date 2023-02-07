@@ -1,0 +1,33 @@
+#!/bin/env bash
+
+help()
+{
+	echo "slog $pattern $segnr"
+	exit -1
+}
+
+dstdir=$MASTER_DATADIR
+dirprefix="$dstdir/datadirs/"
+segnr=8
+
+if [ $# -lt 1 ]; then
+	help
+elif [ $# == 2 ]; then
+	pattern=$1
+	segnr=$2
+else
+	pattern=$1
+fi
+
+echo "Dir:$dirprefix segnr:$segnr:pattern:$pattern"
+
+for((i=1;i<=$segnr;i++))
+do
+	echo "segdb$i"
+	dir="${dirprefix}/dbfast$i/demoDataDir"$((i-1))"/log"
+	lastlog=`ls -lrth $dir|tail -1|awk '{print $NF}'`
+	echo $lastlog
+	file="$dir/$lastlog"
+	echo $file
+	grep $pattern $file
+done
