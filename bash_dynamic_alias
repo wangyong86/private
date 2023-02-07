@@ -6,16 +6,18 @@ alias code="cd $GPSRC"
 alias plan="cd $BE/optimizer/plan/"
 alias etor="cd $BE/executor/"
 alias access="cd $BE/access/"
-alias cdb="cd $INC/cdb/"
+alias cdb="cd $BE/cdb/"
 alias ctlg="cd $BE/catalog"
-alias mts="cd $CONTRIB/matrixts"
+alias mtn="cd $BE/cdb/motion"
 alias cv="mts; cd continuous_view"
 alias st="mts; cd sortheap"
 alias ao="access; cd appendonly"
 alias aocs="access; cd aocs"
 
+alias mts="cd $CONTRIB/matrixts"
+
 # vectorization
-alias vec="cd $CONTRIB/mxvector/mxvector"
+alias vec="cd $CONTRIB/mxvector"
 alias rt="cd $RTPATH"
 
 #superfast
@@ -25,8 +27,8 @@ else
     export DD=$MASTER_DATADIR/datadirs
 fi
 
-alias vsf="vec;cd ../superfast/superfast"
-alias codec="mts;cd codec"
+alias vsf="vec; cd superfast/superfast"
+alias codec="mts; cd codec"
 alias csf="codec; cd superfast"
 
 # Mars3 related

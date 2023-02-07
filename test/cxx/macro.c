@@ -17,6 +17,11 @@
 
 #define hehe(x,y) wx##y
 
+void Test()
+{
+	printf("if defined TEST macro in command line, you will not see this message\n");
+}
+
 
 int main(int argc, char * argv[])
 {
@@ -24,4 +29,8 @@ int main(int argc, char * argv[])
 
 	MxAssertVar(0, "hello, the workld");
 	MxAssertVar(0, "hello, the workld: %d", 10);
+
+#ifndef TEST
+Test();
+#endif
 }
