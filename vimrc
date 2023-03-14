@@ -87,7 +87,7 @@ set number
 
 " shift width, tab stop width
 set ts=4 sw=4
-#set et
+" set et
 
 "set noet
 
