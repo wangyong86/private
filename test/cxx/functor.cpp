@@ -20,6 +20,8 @@ private:
 void func(int *a) { ++*a;}
 
 typedef std::function<void()> functor;
+using functor1 = std::function<int(int)>;
+
 class ScopedTimer {
 public:
 	explicit ScopedTimer (functor f)
@@ -36,8 +38,29 @@ private:
 	functor f_;
 };
 
-	
-int main(int argc, char **argv) {
+void print(functor1 const &f)
+{
+	cout << f(10) << endl;
+}
+
+void test2()
+{
+	auto  a = [&](int i)->int {
+		return i*2;
+	};
+
+	print(a);
+}
+
+void test3()
+{
+	print([&](int i){
+		return i*3;
+	});
+}
+
+void test1()
+{
 	int i = 0;
 	functor f = std::bind(func, &i);
 
@@ -45,4 +68,11 @@ int main(int argc, char **argv) {
 		ScopedTimer timer(f);
 	}
 	cout << i << endl;
+}
+
+int main(int argc, char **argv) 
+{
+	test1();
+	test2();
+	test3();
 }
