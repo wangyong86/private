@@ -28,3 +28,4 @@
 	insteadOf = https://github.com/
 [core]
 	editor = /usr/bin/vim
+	pager = less -x1,5
