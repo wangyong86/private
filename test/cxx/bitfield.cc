@@ -1,6 +1,8 @@
-// Bit field can access and store directly, init as normal struct;
-// Bit field should not exceed it's range
-// Bit field should not cross uint32 border
+// Bit field:
+// 1) can access and store directly, init as normal struct
+// 2) should not exceed it's range
+// 3) should not cross uint32 border
+// 4) can be specify default value from c++17
 
 #include <iostream>
 #include <cstdlib>
@@ -8,9 +10,14 @@
 using namespace std;
 
 typedef struct BitField {
-    uint16_t first:3;
-    uint16_t second:13;
+    uint16_t first:3 {0};
+    uint16_t second:13 {0};
 } BitField;
+
+typedef struct DefaultMember {
+    uint16_t first {0};
+    uint16_t second {0};
+} DefaultMember;
 
 int main(int argc, char **argv) {
     BitField bf;
