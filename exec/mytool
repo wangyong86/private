@@ -32,7 +32,7 @@ if [ "$1" == "-i" ]; then
 		opt=""
 	fi
     cd $dir
-	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.hpp"|grep -v test |grep -v mars >cscope.files
+	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.go" -o -name "*.hpp"|grep -v test |grep -v mars >cscope.files
     cscope -Rbkq -i cscope.files 2>cscope.temp
 	grep -v cannot cscope.temp
 	rm -f cscope.temp
@@ -46,7 +46,9 @@ fi
 
 #create demo-cluster simple
 baseport=5658
-segnum=8
+segnum=3
+export MASTER_MAX_CONNECT=150
+
 if [ "$1" == "-d" ]; then
     cd $GPSRC
 	if [ $# -eq 2 ]; then

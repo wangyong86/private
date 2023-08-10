@@ -14,6 +14,7 @@ function restore_shallow()
 	cp .screenrc $targetpath	
 	cp .tmux.conf $targetpath	
 	cp .bash_profile $targetpath
+	cp .ctags $targetpath
 }
 
 if [ $# = 0 ]; then
