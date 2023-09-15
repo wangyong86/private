@@ -47,8 +47,6 @@ fi
 #create demo-cluster simple
 baseport=5658
 segnum=3
-export MASTER_MAX_CONNECT=150
-
 if [ "$1" == "-d" ]; then
     cd $GPSRC
 	if [ $# -eq 2 ]; then
@@ -70,8 +68,8 @@ if [ "$1" == "-d" ]; then
     fi
 
     createdb t
-	gpconfig -c gp_vmem_idle_resource_timeout -v 0
-	gpconfig -c enable_parallel_mode -v off 
+#	gpconfig -c gp_vmem_idle_resource_timeout -v 0
+#	gpconfig -c enable_parallel_mode -v off 
 	gpstop -u
 
     cd -
@@ -117,10 +115,15 @@ fi
 
 OLDGPHOME=/home/wy/gpdb
 if [ "$1" == "-c" ]; then
-	code
+	#code
     #simple perf mode
+	CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ../matrixdb/configure --with-perl --with-python --disable-debug --disable-cassert --disable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --enable-enterprise --without-mysqlfdw --without-mongofdw --with-openssl --without-licensecheck --enable-mxvector --prefix=$OLDGPHOME
+	#CFLAGS='-O3 -g3' CXXFLAGS='-O3 -g3' ./configure --with-perl --with-python --disable-debug --enable-cassert --disable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --enable-enterprise --without-mysqlfdw --without-mongofdw --with-openssl --without-licensecheck --enable-mxvector --prefix=$OLDGPHOME
+	#Golden config for gdb acceleration
+	#CFLAGS='-O3 -g3' CXXFLAGS='-O3 -g3' ./configure --with-zstd --with-perl --with-python --disable-debug --disable-cassert --disable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --enable-enterprise --without-mysqlfdw --without-mongofdw --with-openssl --without-licensecheck --enable-mxvector --prefix=$OLDGPHOME
     #CFLAGS='-O3 -g3 -march=native' CXXFLAGS='-O3 -g3 -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
-    CFLAGS='-O0 -g3 -march=native' CXXFLAGS='-O0 -g3 -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-cassert --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
+    #CFLAGS='-O3 -g3 -march=native' CXXFLAGS='-O3 -g3 -march=native' ./configure --with-zstd --disable-cassert --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
+    #CFLAGS='-O0 -g3 -march=native' CXXFLAGS='-O0 -g3 -march=native' ./configure --disable-orca --with-openssl --with-perl --with-python --with-libxml --enable-cassert --enable-debug --enable-depend --enable-mxvector --prefix=$OLDGPHOME
 
     #CFLAGS='-O0 -g -msse4.1 -funroll-loops -ftree-vectorize' CXXFLAGS='-O0 -g -msse4.1 -funroll-loops -ftree-vectorize' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
     #CFLAGS="-O0 -g" CXXFLAGS="-O0 -g" ./configure --prefix=${OLDGPHOME} --with-postgresfdw --enable-enterprise --without-mysqlfdw --without-mongofdw --with-pg-hint-plan --with-perl --with-python --disable-orca --with-openssl --with-ldap --with-libcurl --with-libxml --enable-mapreduce --enable-orafce --enable-ic-proxy --enable-mxvector --without-quicklz --disable-tap-tests --without-licensecheck --enable-debug-extensions
@@ -141,7 +144,7 @@ if [ "$1" == "-c" ]; then
     #CFLAGS='-O0 -g' CXXFLAGS='-O0 -g' ./configure --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --with-numa --prefix=$OLDGPHOME
 
     #CFLAGS='-O0 -g' CXXFLAGS='-O0 -g' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
-	cd -
+	#cd -
     echo "config matrixdb finished"
 fi
 
