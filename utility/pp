@@ -1,0 +1,180 @@
+#!/usr/bin/env python
+
+"""fast pp in python"""
+
+from __future__ import print_function
+import subprocess
+import sys
+
+class Process(object):
+    """gpdb/postgres process"""
+
+    postmasters = {}
+    procs = {}
+
+    max_pid = 0
+    max_ppid = 0
+    pid_width = 6
+    ppid_width = 6
+
+    ncolors = 0
+    colors = [
+        "\033[1;36m",   # light cyan
+        "\033[1;35m",   # light magenta
+        "\033[1;34m",   # light blue
+        "\033[1;33m",   # light brown
+        "\033[1;32m",   # light green
+        "\033[1;31m",   # light red
+        "\033[36m",     # cyan
+        "\033[35m",     # magenta
+        "\033[34m",     # blue
+        "\033[33m",     # brown
+        "\033[32m",     # green
+        "\033[31m",     # red
+
+        "\033[0m",      # reset
+    ]
+    backend_color  = '\033[1;30m'
+    frontend_color = '\033[1;37m'
+    reset_color    = '\033[0m'
+
+    def __init__(self, pid, ppid, cmd):
+        self.pid = pid
+        self.ppid = ppid
+        self.cmd = cmd
+
+        self.args = cmd.split()
+
+        self.identify()
+
+        self.color = ''
+        self.parent_color = ''
+        self.cmd_color = ''
+
+    @staticmethod
+    def make_color(color):
+        return '\033[' + color + 'm'
+
+    @staticmethod
+    def assign_color():
+        if Process.ncolors >= len(Process.colors):
+            return ''
+        Process.color = Process.colors[Process.ncolors]
+        Process.ncolors += 1
+        return Process.color
+
+    def colorize(self):
+        if self.is_postmaster:
+            self.color = self.assign_color()
+        elif self.is_backend:
+            self.color = Process.backend_color
+        elif self.is_frontend:
+            self.color = Process.frontend_color
+        else:
+            self.color = ''
+
+        if self.is_postmaster:
+            self.parent_color = ''
+            self.cmd_color = ''
+        else:
+            if self.ppid in Process.postmasters:
+                self.parent_color = Process.postmasters[self.ppid].color
+                self.cmd_color = self.color
+            elif self.ppid in Process.procs:
+                # a 4.3 mirror could be the child of the primary, and it also
+                # has children processes.
+                parent = Process.procs[self.ppid]
+                if parent.ppid in Process.postmasters:
+                    self.parent_color = Process.postmasters[parent.ppid].color
+                    self.cmd_color = self.color
+                else:
+                    # unexpected condition
+                    self.parent_color = self.color
+                    self.cmd_color = self.color
+            else:
+                # during cluster deployment it's possible that a postgres
+                # process's parent is a shell instead of the init process
+                self.parent_color = self.color
+                self.cmd_color = self.color
+
+    def output(self, fout):
+        self.colorize()
+
+        print('{pid_color}{pid:{pid_width}}{reset_color} '
+              '{ppid_color}{ppid:{ppid_width}}{reset_color} '
+              '{cmd_color}{cmd}{reset_color}'.format(
+                  pid=self.pid,
+                  ppid=self.ppid,
+                  cmd=self.cmd,
+                  pid_color=self.color,
+                  ppid_color=self.parent_color,
+                  cmd_color=self.cmd_color,
+                  reset_color=Process.reset_color,
+                  pid_width=Process.pid_width,
+                  ppid_width=Process.ppid_width,
+              ),
+              file=fout)
+
+    @staticmethod
+    def decide_format():
+        Process.pid_width = len(str(Process.max_pid))
+        Process.ppid_width = len(str(Process.max_ppid))
+
+    def identify(self):
+        """identify gpdb/postgres properties"""
+        self.is_postmaster = False
+        self.is_master = False
+        self.is_mirror = False
+        self.is_frontend = False
+        self.is_backend = False
+
+        self.is_master = 'gp_role=utility' not in self.args
+        self.is_mirror = '-i' in self.args
+
+        if self.ppid in [0, 1]:
+            self.is_postmaster = True
+            Process.postmasters[self.pid] = self
+        elif [True for arg in self.args if arg and str(arg[-1]) in "])"]:
+            self.is_frontend = True
+        else:
+            self.is_backend = True
+
+        Process.max_pid = max(Process.max_pid, self.pid)
+        Process.max_ppid = max(Process.max_ppid, self.ppid)
+
+def main():
+    """the main entry"""
+
+    command = 'ps -wwo pid=,ppid=,command= -C postgres'
+    output, _ = subprocess.Popen(command.split(),
+                                 stdout=subprocess.PIPE).communicate()
+    for line in output.decode().splitlines():
+        pid, ppid, cmd = line.split(None, 2)
+        pid = int(pid)
+        ppid = int(ppid)
+        cmd = cmd.rstrip()
+        proc = Process(pid, ppid, cmd)
+        Process.procs[pid] = proc
+
+    Process.decide_format()
+
+    if len(sys.argv) > 1:
+        command = 'grep --color=always'
+        child = subprocess.Popen(command.split() + sys.argv[1:],
+                                 stdin=subprocess.PIPE,
+                                 encoding='utf-8')
+        fout = child.stdin
+    else:
+        child = None
+        fout = sys.stdout
+
+    for pid in sorted(Process.procs.keys()):
+        proc = Process.procs[pid]
+        proc.output(fout)
+
+    if child:
+        fout.close()
+        child.wait()
+
+if __name__ == '__main__':
+    main()
