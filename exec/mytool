@@ -32,7 +32,7 @@ if [ "$1" == "-i" ]; then
 		opt=""
 	fi
     cd $dir
-	find `pwd` -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.go" -o -name "*.hpp"|grep -v test |grep -v mars >cscope.files
+	find `pwd` -type f \( -name "*.[ch]" -o -name "*.cpp" -o -name "*.cc" -o -name "*.go" -o -name "*.hpp" -o -name "*.py" \) |grep -v "/test" |grep -v "/mars"|grep -v aws-sdk-cpp|grep -v protobuf >cscope.files
     cscope -Rbkq -i cscope.files 2>cscope.temp
 	grep -v cannot cscope.temp
 	rm -f cscope.temp

@@ -38,9 +38,9 @@ fi
 
 # this is outputting the tags into the file 'tags', and appending
 #find -type f -name '*.[chyl]' -o -name '*.cc' -o -name "*.[ch]pp" \
-find `pwd`/ -type f -name '*.[chyl]' -o -name '*.cc' -o -name "*.[ch]pp" \
-    -o -name "*.go" | \
-	grep -v test|grep -v mock |grep -v "mars/" |grep -v "aws"| xargs ctags -a -f tags "$FLAGS"
+find `pwd`/ -type f \( -name '*.[chyl]' -o -name '*.cc' -o -name "*.[ch]pp" -o -name "*.py"\
+    -o -name "*.go" \) | \
+	grep -v test|grep -v "mock/" |grep -v "mars/" |grep -v "aws"| xargs ctags -a -f tags "$FLAGS"
 
 # Exuberant tags has a header that we cannot sort in with the other entries
 # so we skip the sort step
