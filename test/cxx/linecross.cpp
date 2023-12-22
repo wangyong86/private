@@ -1,9 +1,7 @@
-#include "template.h"
-
+#include <iostream>
 #include <cassert>
 
 using namespace std;
-using namespace myspace;
 
 struct point {
 	int x;
