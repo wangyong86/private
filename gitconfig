@@ -8,7 +8,7 @@
     cp = cherry-pick
     fe = fetch
     lg = log --stat
-    rb = pull --rebase 
+    rb = pull --rebase --autostash
     st = status
     sh = show
     patch = format-patch
@@ -28,7 +28,7 @@
 	insteadOf = https://github.com/
 
 [core]
-	editor = /usr/bin/vim
+	editor = vim
 	pager = less -x1,5
 
 [color]
