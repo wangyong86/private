@@ -29,6 +29,10 @@ function parse_parameter {
 			shift
 		elif [ "$1" == "-h" ]; then
 			help
+		else
+			echo "parameter must preceded by -c/-d/-h"
+			help
+			break
 		fi
 	done
 }
