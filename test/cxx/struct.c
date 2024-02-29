@@ -5,19 +5,26 @@
 
 #define MAXKEYCACHE 3
 
+typedef struct spec
+{
+	int			base;
+	/* field of the same type can be put together, seperated by comma*/
+	int			a, b, c;
+} Spec;
+
 // non-compact mode: align by 8B, neighbours are arranged in a 8B elements.
 // total size if 64
 typedef struct SortTuple
 {
-    uint8_t       type;
-    void       *tuple;
-    int         ntuples;        /* number of logical tuple */
-    uint16_t      tapeno;         /* see notes above */
-    uint16_t      runno;          /* see notes above */
-    bool        cached[MAXKEYCACHE];        /* number of sort key values cached */
-    bool        ignore;
-    int64_t       datums[MAXKEYCACHE];        /* value of key column */
-    bool        isnulls[MAXKEYCACHE];       /* is key column NULL? */
+    uint8_t		type;
+    void	   *tuple;
+    int			ntuples;        /* number of logical tuple */
+    uint16_t	tapeno;         /* see notes above */
+    uint16_t	runno;          /* see notes above */
+    bool		cached[MAXKEYCACHE];        /* number of sort key values cached */
+    bool		ignore;
+    int64_t		datums[MAXKEYCACHE];        /* value of key column */
+    bool		isnulls[MAXKEYCACHE];       /* is key column NULL? */
 } SortTuple;
 
 // compaction mode: align by 1B, bool is also occupy a bytes.
@@ -47,4 +54,5 @@ int main()
 	memset(&cs.cached, false, MAXKEYCACHE*sizeof(bool));
 	printf("bool value is: %d, bool value in compact struct is:%d\n", 
 			s.ignore, cs.ignore);
+	printf("sizeof spec: %zd\n", sizeof(Spec));
 }
