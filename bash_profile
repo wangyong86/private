@@ -1,14 +1,13 @@
 # .bash_profile
-
 if [ -f ~/.bashrc ]; then
     . ~/.bashrc
 fi
 
 #use gcc as high as possible, gcc7 is smallest one
-if [ -f /opt/rh/devtoolset-11/enable ]; then
-	source /opt/rh/devtoolset-11/enable
-elif [ -f /opt/rh/devtoolset-10/enable ]; then
+if [ -f /opt/rh/devtoolset-10/enable ]; then
 	source /opt/rh/devtoolset-10/enable
+elif [ -f /opt/rh/devtoolset-11/enable ]; then
+	source /opt/rh/devtoolset-11/enable
 elif [ -f /opt/rh/devtoolset-7/enable ]; then
 	source /opt/rh/devtoolset-7/enable
 fi
@@ -18,20 +17,19 @@ fi
 if [ "$HOSTNAME" = wydev ]; then 
 	export GPHOME=/home/wy/gpdb
 	export GPSRC=~/matrixdb
-#	export GIT=/home/wy/git-2.12.4
+# docker
+elif [ "$HOSTNAME" = sdw1 ]; then
+	export GPHOME=/workspace/gpdb
+	export GPSRC=/workspace/matrixdb
 #server
 else 
 	export GPHOME=/home/wy/gpdb
-#	export GPHOME=/data1/wy64/gpdb64
 	export GPSRC=~/matrixdb
 fi
 
+# postgres
 export PGHOME=/home/wy/opensource/postgres
 export PGDATA=/home/wy/opensource/postgres/data
-
-#export GPHOME=/home/wy/temp/usr/local/matrixdb-4.3.0.community
-#export GPHOME=/home/wy/gpdb64
-#export GPSRC=~/64matrixdb
 
 # Setup matrixdb env
 if [ -f $GPHOME/greenplum_path.sh ]; then
@@ -62,6 +60,8 @@ export FAST=/home/wy/superfast
 
 if [ -d /home/wy/vim ]; then
     export VIMDIR=/home/wy/vim
+elif [ -f /usr/local/bin/vim ]; then
+    export VIMDIR=/usr/local/
 else
     export VIMDIR=/usr
 fi
@@ -89,18 +89,8 @@ alias vt="vi ~/private/exec/mytool"
 alias ppi="pp -i"
 alias ppd="pp -d"
 
-
 # third party path
-alias os="cd ~/opensource"
-alias ck="cd $CLICKSRC"
-alias tsbs="cd /home/wy/tsbs"
-alias libc="cd ~/opensource/glibc"
-alias folly="cd ~/opensource/folly/folly"
-alias kernel="cd ~/opensource/kernel"
-
 source ~/private/bash_dynamic_alias
-#temporary path
-alias lx="cd ~/lxdev4"
 
 # command compound
 alias src="source $GPHOME/greenplum_path.sh;source $GPDEMO/gpdemo-env.sh"
@@ -109,7 +99,7 @@ alias g10="source /opt/rh/devtoolset-10/enable"
 alias g9="source /opt/rh/devtoolset-9/enable"
 alias g8="source /opt/rh/devtoolset-8/enable"
 alias g7="source /opt/rh/devtoolset-7/enable"
-alias mkmars="mars && make clean && CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' make -j7 CXX=/usr/bin/g++"
+
 alias xmake="compiledb make"
 alias ftime='/usr/bin/time -f "\n---------------------------------\nElapseTime(m:s):\t"%E"\nKernelTime(s):\t"%S"\nUserTime(s):\t"%U"\nCPUPercentage:\t"%P"\nMaxResidnetMem(Kb):\t"%M"\nAvgDataMem(Kb):\t"%D"\nInvolCS:\t"%c"\nVolCS:\t"%w"\nFsInput:\t"%I"\nFsOuput:\t"%O"\nSkRcv:\t"%r"\nSkSnd:\t"%s'
 
