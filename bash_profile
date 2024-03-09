@@ -1,16 +1,7 @@
 # .bash_profile
-if [ -f ~/.bashrc ]; then
-    . ~/.bashrc
-fi
-
-#use gcc as high as possible, gcc7 is smallest one
-if [ -f /opt/rh/devtoolset-10/enable ]; then
-	source /opt/rh/devtoolset-10/enable
-elif [ -f /opt/rh/devtoolset-11/enable ]; then
-	source /opt/rh/devtoolset-11/enable
-elif [ -f /opt/rh/devtoolset-7/enable ]; then
-	source /opt/rh/devtoolset-7/enable
-fi
+#if [ -f ~/.bashrc ]; then
+#    . ~/.bashrc
+#fi
 
 # supress perl locale warning
 export LC_ALL=en_US.UTF-8
@@ -102,3 +93,13 @@ export CXX="ccache g++"
 # For tmux, it may incur unknown env change at very early stage(before loading
 # /etc/profile
 #unset CC; unset CXX
+
+#use gcc as high as possible, gcc7 is smallest one
+if [ -f /opt/rh/devtoolset-10/enable ]; then
+	source /opt/rh/devtoolset-10/enable
+elif [ -f /opt/rh/devtoolset-11/enable ]; then
+	source /opt/rh/devtoolset-11/enable
+elif [ -f /opt/rh/devtoolset-7/enable ]; then
+	source /opt/rh/devtoolset-7/enable
+fi
+
