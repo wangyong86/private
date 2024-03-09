@@ -15,8 +15,8 @@ function restore_shallow()
 	cp .tmux.conf $targetpath	
     cp .bash_profile $targetpath	
 	echo "export CFGROOT=/home/wy" >> $targetpath/.bashrc
+	echo "source \$CFGROOT/private/bash_profile" >> $targetpath/.bashrc
 	echo "export USER=wy" >> $targetpath/.bashrc
-	echo "source $CFGROOT/private/bash_profile" >> $targetpath/.bashrc
 	cp .ctags $targetpath
 }
 
@@ -24,7 +24,7 @@ if [ $# = 0 ]; then
 	restore_shallow
 
     # Take new config effective
-    source ~/.bash_profile
+    source ~/.bashrc
 
     # install vundle
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
