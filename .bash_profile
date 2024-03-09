@@ -1,1 +1,1 @@
-source ~/private/bash_profile
+source $CFGROOT/private/bash_profile

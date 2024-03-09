@@ -13,7 +13,8 @@ function restore_shallow()
 	cp .vimrc $targetpath	
 	cp .screenrc $targetpath	
 	cp .tmux.conf $targetpath	
-	cp .bash_profile $targetpath
+	echo "export CFGROOT=/home/wy" >> $targetpath/.bash_profile
+	cat .bash_profile >> $targetpath/.bash_profile
 	cp .ctags $targetpath
 }
 
