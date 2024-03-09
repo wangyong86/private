@@ -19,7 +19,7 @@ if [ -f /usr/local/bin/git ]; then
     alias git='/usr/local/bin/git'
 fi
 
-if [ -d /home/wy/vim ]; then
+if [ -f /home/wy/vim/bin/vim ]; then
     export VIMDIR=/home/wy/vim
 elif [ -f /usr/local/bin/vim ]; then
     export VIMDIR=/usr/local/
