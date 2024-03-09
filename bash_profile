@@ -12,6 +12,21 @@ elif [ -f /opt/rh/devtoolset-7/enable ]; then
 	source /opt/rh/devtoolset-7/enable
 fi
 
+# supress perl locale warning
+export LC_ALL=en_US.UTF-8
+
+if [ -f /usr/local/bin/git ]; then
+    alias git='/usr/local/bin/git'
+fi
+
+if [ -d /home/wy/vim ]; then
+    export VIMDIR=/home/wy/vim
+elif [ -f /usr/local/bin/vim ]; then
+    export VIMDIR=/usr/local/
+else
+    export VIMDIR=/usr
+fi
+
 # host relate config
 # mac book
 if [ "$HOSTNAME" = wydev ]; then 
@@ -27,51 +42,21 @@ else
 	export GPSRC=~/matrixdb
 fi
 
-# postgres
-export PGHOME=/home/wy/opensource/postgres
-export PGDATA=/home/wy/opensource/postgres/data
-
 # Setup matrixdb env
 if [ -f $GPHOME/greenplum_path.sh ]; then
     source $GPHOME/greenplum_path.sh
 fi
 
+export GPDEMO=$GPSRC/gpAux/gpdemo/
 if [ -f $GPDEMO/gpdemo-env.sh ]; then
     source $GPDEMO/gpdemo-env.sh
 fi
-
-# User specific environment and startup programs
-
-#PATH=$PATH:$HOME/.local/bin:$HOME/bin:$GPHOME/bin:$HOME/exec/
-
-
-# supress perl locale warning
-export LC_ALL=en_US.UTF-8
-
-# term
-
-export CLICKSRC=~/ClickHouse
-export GPDEMO=$GPSRC/gpAux/gpdemo/
-export LLVM=/home/wy/llvm-project
 export RTPATH=$GPSRC/src/test/regress
 export CPATH=$GPSRC/contrib
-export TSBS=/home/wy/tsbs
-export FAST=/home/wy/superfast
-
-if [ -d /home/wy/vim ]; then
-    export VIMDIR=/home/wy/vim
-elif [ -f /usr/local/bin/vim ]; then
-    export VIMDIR=/usr/local/
-else
-    export VIMDIR=/usr
-fi
 
 export PATH=/opt/MegaRAID/MegaCli/:$HOME/install/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_CONFIG_PATH
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
-
-#for source compiled arrow
-#export PKG_CONFIG_PATHl=$PKG_CONFIG_PATHl:/usr/local/lib64/pkgconfig
 
 # tool modify
 alias tmux="tmux -u -2"
