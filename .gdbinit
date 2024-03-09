@@ -1,1 +1,1 @@
-source $CFGROOT/private/gdbinit
+source ~/private/gdbinit
