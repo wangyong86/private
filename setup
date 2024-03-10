@@ -12,11 +12,15 @@ function restore_shallow()
 	cp .gdbinit $targetpath	
 	cp .vimrc $targetpath	
 	cp .screenrc $targetpath	
-	cp .tmux.conf $targetpath	
+	cp .tmux.conf $targetpath
+	
     cp .bash_profile $targetpath	
 	echo "export CFGROOT=/home/wy" >> $targetpath/.bashrc
 	echo "source \$CFGROOT/private/bash_profile" >> $targetpath/.bashrc
 	echo "export USER=wy" >> $targetpath/.bashrc
+
+	mkdir $targetpath/.cgdb && cp cgdbrc $targetpath/
+
 	cp .ctags $targetpath
 }
 
