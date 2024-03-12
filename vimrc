@@ -33,9 +33,6 @@ Plugin 'morhetz/gruvbox'
 " plugin on GitHub repo
 Plugin 'tpope/vim-fugitive'
 
-Plugin 'scrooloose/nerdtree'
-" All of your Plugins must be added before the following line
-
 " plugin from http://vim-scripts.org/vim/scripts.html
 " Plugin 'L9'
 " Git plugin not hosted on GitHub
