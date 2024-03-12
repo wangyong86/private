@@ -15,3 +15,4 @@ set tui tab-width 4
 handle SIGUSR1 nostop
 
 source ~/private/utility/plist.py
+source ~/private/utility/dump.py
