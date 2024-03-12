@@ -1,6 +1,10 @@
-# make -f t.mk -e cflags=yy -e cxxflags=zz
-install: dir= ls -l
+#install: dir= ls -l
 
-override cflags=xx
-install:
-	@echo "hello again" ${dir} ${cflags} ${cxxflags}
+install: wy.out
+
+install: a.out
+	@echo "hello again" ${flag}
+	make -f t.mk e
+
+e:a.out
+	cp $< $@
