@@ -1,0 +1,25 @@
+#!/bin/env bash
+# -c to call command in vim
+# </dev/tty to avoid "Input not from terminal"
+# "vs file1|vs file2" to execute multi-command in Vim
+
+#democluster location
+cmdbase='vim -d'
+case=$1
+
+if [ $# -eq 2 ]; then
+	if [ $2 -eq 1 ]; then
+		cmdsup="-c 'vs input/$case.source|vs regression.diffs'"
+		diffs="output/$case.source results/$case.out"
+	else
+		cmdsup="-c 'vs sql/$case.sql|vs regression.diffs'"
+		diffs="expected/${case}_optimizer.out results/$case.out"
+	fi
+else
+	cmdsup="-c 'vs sql/$case.sql|vs regression.diffs'"
+	diffs="expected/${case}.out results/$case.out"
+fi
+
+cmd=$cmdbase" "$diffs" "$cmdsup"</dev/tty"
+#echo $cmd|sh -c 
+sh -c  "$cmd"
