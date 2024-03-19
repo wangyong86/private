@@ -25,7 +25,7 @@ if [ "$HOSTNAME" = wydev ]; then
 	export GPSRC=~/matrixdb
 # docker
 elif [ "$HOSTNAME" = sdw1 ]; then
-	export GPHOME=/workspace/gpdb
+	export GPHOME=$WORKSPACE_DIR/gpdb
 	export GPSRC=/workspace/matrixdb
 #server
 else 
