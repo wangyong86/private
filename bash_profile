@@ -103,3 +103,7 @@ elif [ -f /opt/rh/devtoolset-7/enable ]; then
 	source /opt/rh/devtoolset-7/enable
 fi
 
+# add git completion manually
+if [ -f ~/.git-completion ]; then
+. ~/.git-completion
+fi
