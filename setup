@@ -19,7 +19,7 @@ function restore_shallow()
 	echo "source \$CFGROOT/private/bash_profile" >> $targetpath/.bashrc
 	echo "export USER=wy" >> $targetpath/.bashrc
 
-	mkdir $targetpath/.cgdb && cp cgdbrc $targetpath/
+	mkdir $targetpath/.cgdb && cp cgdbrc $targetpath/.cgdb/
 
 	cp .ctags $targetpath
 }
