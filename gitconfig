@@ -29,6 +29,8 @@
 
 [core]
 	editor = vim
+
+	# ts=4
 	pager = less -x1,5
 
 [color]
