@@ -38,6 +38,8 @@ if [ $# = 0 ]; then
     # pg formatter
     git clone git@github.com:darold/pgFormatter.git
 
+	unzip -d ~/.vim taglist_46.zip
+
     # if autodie.pm is missing, install it
     # wget https://cpan.metacpan.org/authors/id/T/TO/TODDR/autodie-2.34.tar.gz
 	exit 0
