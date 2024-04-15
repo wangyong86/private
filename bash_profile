@@ -64,6 +64,7 @@ alias pr="prd; vi "
 alias vt="vi ~/private/exec/mytool"
 alias ppi="pp -i"
 alias ppd="pp -d"
+alias psg="ps -ef|grep "
 
 # third party path
 source ~/private/bash_dynamic_alias
