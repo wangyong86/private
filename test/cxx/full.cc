@@ -7,6 +7,8 @@ int main(int argc, char * argv[])
 	if (num == 0x100 * 16 + 15)
 		std::cout << "c++ support full keyword" << std::endl;
 
+	printf("hello, world\n");
+
     return 0;
 }
 
