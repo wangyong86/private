@@ -33,11 +33,6 @@ else
 	export GPSRC=~/matrixdb
 fi
 
-# Setup matrixdb env
-if [ -f $GPHOME/greenplum_path.sh ]; then
-    source $GPHOME/greenplum_path.sh
-fi
-
 export GPDEMO=$GPSRC/gpAux/gpdemo/
 if [ -f $GPDEMO/gpdemo-env.sh ]; then
     source $GPDEMO/gpdemo-env.sh
@@ -108,3 +103,9 @@ fi
 if [ -f ~/.git-completion ]; then
 . ~/.git-completion
 fi
+
+# Setup matrixdb env, should be delayed here
+if [ -f $GPHOME/greenplum_path.sh ]; then
+    source $GPHOME/greenplum_path.sh
+fi
+
