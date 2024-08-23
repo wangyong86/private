@@ -21,6 +21,9 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
+" recently opened file
+Plugin 'jlanzarotta/bufexplorer'
+
 " eye pleasant color scheme: 
 Plugin 'morhetz/gruvbox'
 
