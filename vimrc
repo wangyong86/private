@@ -61,6 +61,12 @@ Plugin 'masukomi/vim-markdown-folding', { 'for': 'markdown' }
 Plugin 'godlygeek/tabular'
 Plugin 'preservim/vim-markdown'
 
+Plugin 'kien/ctrlp.vim'
+
+" toggle :NERDTree 
+" :help NERDTree
+Plugin 'preservim/nerdtree'
+
 " realtime mardown, use together with browser, disable it
 " Plugin 'kannokanno/previm'
 " Plugin 'tyru/open-browser.vim'
@@ -163,6 +169,32 @@ let Tlist_Exit_OnlyWindow=1 " exit if last
 let Tlist_WinWidth=40
 
 map <C-p> <Esc>:TlistToggle<Cr>
+
+" ======================== ctrlp =====================
+let g:ctrlp_map = '<C-l>'
+let g:ctrlp_cmd = 'CtrlP'
+map <leader>f :CtrlPMRU<CR>
+let g:ctrlp_custom_ignore = {
+    \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
+    \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
+    \ }
+let g:ctrlp_working_path_mode=0
+let g:ctrlp_match_window_bottom=1
+let g:ctrlp_max_height=15
+let g:ctrlp_match_window_reversed=0
+let g:ctrlp_mruf_max=500
+let g:ctrlp_follow_symlinks=1
+
+" Press <F5> to purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
+" Press <c-f> and <c-b> to cycle between modes.
+" Press <c-d> to switch to filename only search instead of full path.
+" Press <c-r> to switch to regexp mode.
+" Use <c-j>, <c-k> or the arrow keys to navigate the result list.
+" Use <c-t> or <c-v>, <c-x> to open the selected entry in a new tab or in a new split.
+" Use <c-n>, <c-p> to select the next/previous string in the prompt's history.
+" Use <c-y> to create a new file and its parent directories.
+" Use <c-z> to mark/unmark multiple files and <c-o> to open them.
+" ======================== ctrlp =====================
 
 "cctree and default hotkey, Ref: https://sites.google.com/site/vimcctree/faq
 "autocmd vimenter * if filereadable('/home/wy/matrixdb/cscope.out') | CCTreeLoadDB /home/wy/matrixdb/cscope.out | endif
