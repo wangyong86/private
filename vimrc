@@ -23,6 +23,10 @@ Plugin 'VundleVim/Vundle.vim'
 
 " recently opened file
 Plugin 'jlanzarotta/bufexplorer'
+" \<Leader\>be normal open: <leader> is \ defaultly
+" \<Leader\>bt toggle open / close
+" \<Leader\>bs force horizontal split open
+" \<Leader\>bv force vertical split open
 
 " eye pleasant color scheme: 
 Plugin 'morhetz/gruvbox'
@@ -178,10 +182,12 @@ if has("cscope")
 	set nocscopeverbose " not show cscope db add info
 	if filereadable("./cscope.out")
 		cs add ./cscope.out
+    elseif filereadable("/home/wy/matrixdb/cscope.out")
+		cs add /home/wy/matrixdb/cscope.out
     else
-        if filereadable("/home/wy/matrixdb/cscope.out")
-            cs add /home/wy/matrixdb/cscope.out
-        endif
+		if filereadable("/workspace/matrixdb/cscope.out")
+			cs add /workspace/matrixdb/cscope.out
+		endif
 	endif
 endif
 
