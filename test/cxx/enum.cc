@@ -27,9 +27,9 @@ int testenum()
 	/*
 	 * Following statment is errortic because no << overload defined and enum class
 	 * can't be converted to integer automatically because enum class is strong type
-	 * ``cout << Type::man << endl``;
+	 * ``cout << type::man << endl``;
 	 */
-	cout << Type::man << endl;
+	cout << type::man << endl;
 	cout << gender::man << endl;
 #endif
 
