@@ -5,11 +5,16 @@ using namespace std;
 // const idicates a variable can't be change, a[0] = 'c' is forbidden
 const char *a = "hello, the world";
 
+/*============constexpr============*/
 // it's also a const, it's redundant generally
 constexpr int v_i1 = 100 * 10000;
 
 // it's also okay, this a const, const also can be 
 constexpr const int c_i1 = 100 * 1000;
+
+// But for string, without const, report:
+// warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+constexpr const char *b = "hello";
 
 // mixed with static
 constexpr static const int sc_i1 = 100 * 1000;
@@ -23,6 +28,7 @@ class constexpr_ctor {
   public:
 	int d; 
 };
+/*=================================*/
 
 int main(int argc, char * argv[])
 {
@@ -53,7 +59,7 @@ int main(int argc, char * argv[])
 	constexpr constexpr_ctor t(10);
 
 	cout << "const:" << c_i1 << " constexpr var:" << v_i1 << " constexpr static const:"
-		 << sc_i1 << " constexpr obj variable:" << 10 << endl;
+		 << sc_i1 << " constexpr obj variable:" << 10 << b << endl;
 #if 0
     struct const_val *p = (struct const_val*) malloc (sizeof(struct const_val)); 
    
