@@ -40,8 +40,8 @@ if [ $# = 0 ]; then
 
 	unzip -d ~/.vim taglist_46.zip
 
-	# node graph
-	#git loen git@github.com:japinli/pg_node2graph.git
+	# node graph, depend on graphviz
+	#git clone git@github.com:japinli/pg_node2graph.git
 
     # if autodie.pm is missing, install it
     # wget https://cpan.metacpan.org/authors/id/T/TO/TODDR/autodie-2.34.tar.gz
