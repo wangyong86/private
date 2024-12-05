@@ -28,7 +28,7 @@ Plugin 'jlanzarotta/bufexplorer'
 " \<Leader\>bs force horizontal split open
 " \<Leader\>bv force vertical split open
 
-" eye pleasant color scheme: 
+" eye pleasant color scheme:
 Plugin 'morhetz/gruvbox'
 
 " detailed intro: https://www.jianshu.com/p/27d7fbd6cdc6
@@ -57,13 +57,17 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 
 Plugin 'masukomi/vim-markdown-folding', { 'for': 'markdown' }
 
+Plugin 'vim-scripts/ShowTrailingWhitespace.git'
+
+Plugin 'airblade/vim-gitgutter'
+
 " Syntax highlight of markdown
 Plugin 'godlygeek/tabular'
 Plugin 'preservim/vim-markdown'
 
 Plugin 'kien/ctrlp.vim'
 
-" toggle :NERDTree 
+" toggle :NERDTree
 " :help NERDTree
 Plugin 'preservim/nerdtree'
 
@@ -73,6 +77,18 @@ Plugin 'preservim/nerdtree'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
+
+call plug#begin()
+
+" Use release branch (recommended)
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'gyim/vim-boxdraw'
+
+" List your plugins here
+Plug 'tpope/vim-sensible'
+
+call plug#end()
 
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
@@ -154,10 +170,10 @@ set hlsearch
 " enable mouse
 set mouse=a
 
-" Install taglist 
+" Install taglist
 " 1) w3m https://www.vim.org/scripts/download_script.php?src_id=19574 #may changed
 " 2) decompress in ~/.vim/
- 
+
 " open/close taglsit using f1/esc"
 let Tlist_Use_SingleClick=1 " enable mouse single click
 let Tlist_Show_One_File=1   " only display current file

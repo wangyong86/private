@@ -33,6 +33,10 @@ if [ $# = 0 ]; then
     # install vundle
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
+	# plugin
+	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+	# color scheme
     git clone git@github.com:egel/tmux-gruvbox.git
 
     # pg formatter
@@ -42,6 +46,13 @@ if [ $# = 0 ]; then
 
 	# node graph, depend on graphviz
 	#git clone git@github.com:japinli/pg_node2graph.git
+
+	# nvim
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+	nvm install v16.20.0
+
+	#bear
+	#git clone git@github.com:rizsotto/Bear.git
 
     # if autodie.pm is missing, install it
     # wget https://cpan.metacpan.org/authors/id/T/TO/TODDR/autodie-2.34.tar.gz
