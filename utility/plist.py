@@ -21,7 +21,25 @@ class PList (gdb.Command):
         if list.is_optimized_out:
             print("node %s is optimized out" % args[0])
             return
+
         list_head = list["head"]
+        list_type = list["type"]
+        if list_type == 657 or list_type == 658:
+            list_cell = list_head
+            idx = 0
+            while list_cell != 0:
+                ptr = list_cell["data"]["int_value"]
+                ptr_str = ptr.format_string()
+                if target_idx < 0:
+                    print("[%d] %s" % (idx, ptr_str))
+                elif target_idx == idx:
+                    target_str = "print %s" % (ptr_str)
+                    gdb.execute(target_str)
+                    break
+
+                list_cell = list_cell["next"]
+                idx = idx + 1
+            return
 
         node_type = gdb.lookup_type("Node")
         list_cell = list_head
