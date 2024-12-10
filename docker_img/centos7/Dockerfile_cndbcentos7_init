@@ -1,0 +1,35 @@
+FROM matrixdb/xdb-compile:latest
+
+#RUN curl -L -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+
+# Change to tsinghua yum repo
+RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+    -e 's|^#baseurl=http://mirror.centos.org/centos|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos|g' \
+    -i.bak \
+    /etc/yum.repos.d/CentOS-*.repo
+
+RUN sed -e 's!^metalink=!#metalink=!g' \
+    -e 's!^#baseurl=!baseurl=!g' \
+    -e 's!https\?://download\.fedoraproject\.org/pub/epel!https://mirrors.tuna.tsinghua.edu.cn/epel!g' \
+    -e 's!https\?://download\.example/pub/epel!https://mirrors.tuna.tsinghua.edu.cn/epel!g' \
+    -i /etc/yum.repos.d/epel{,-testing}.repo
+
+#enable doc install
+RUN sed -i 's/^tsflags/#tsflags/g' /etc/yum.conf
+
+RUN yum clean all && \
+    yum makecache && \
+    rm -f /run/nologin && \
+    ssh-keygen -A
+
+RUN yum install --nogpgcheck -y zsh sudo centos-release-scl dnf tmux man man-pages
+
+RUN mkdir -p /etc/sudoers.d && \
+    groupadd -g 10035 wy && \
+    useradd -u 10035 -g 10035 -m -s /bin/bash wy && \
+    echo 'wy ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/wy
+
+# Additional utility by wy
+RUN sudo dnf install -y 'dnf-command(config-manager)' && \
+		sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+		sudo dnf install -y gh

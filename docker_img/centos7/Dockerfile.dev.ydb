@@ -1,0 +1,105 @@
+FROM wy-dev-custom:v2
+
+USER root
+
+RUN yum install -y libxml2 libxml2-devel openssl \
+                   openssl-devel openssh-server libyaml \
+                   libyaml-devel python2-psutil zsh jansson \
+                   readline-devel apr-devel libevent-devel \
+                   libuuid libuuid-devel jansson-devel \
+                   python2-devel cmake3 devtoolset-10 net-tools iproute perl-Env \
+                   xerces-c-devel bzip2-devel libzstd-devel \
+                   perl-devel perl-ExtUtils-Embed expat ccache&& \
+    ln -s /usr/bin/cmake3 /usr/bin/cmake
+
+# fix gcc plugin
+# RUN ln -s /opt/rh/gcc-toolset-10/root/usr/lib/gcc/x86_64-redhat-linux/10/plugin/annobin.so /opt/rh/gcc-toolset-10/root/usr/lib/gcc/x86_64-redhat-linux/10/plugin/gcc-annobin.so
+
+# install libapplier.so
+COPY ./libapplier.so /usr/lib64/
+COPY ./libapplier.so /usr/local/lib64/
+
+# install golang
+COPY ./go1.21.6.linux-amd64.tar.gz /go1.21.6.linux-amd64.tar.gz
+RUN tar -C /usr/local -xzf /go1.21.6.linux-amd64.tar.gz && \
+    rm -f /go1.21.6.linux-amd64.tar.gz
+
+# install etcd
+COPY ./unified/etcd-3.3.11-2.el7.centos.x86_64.rpm /etcd-3.3.11-2.el7.centos.x86_64.rpm
+RUN yum localinstall -y /etcd-3.3.11-2.el7.centos.x86_64.rpm && \
+    rm -f /etcd-3.3.11-2.el7.centos.x86_64.rpm
+
+# install foundationdb
+COPY ./unified/foundationdb-clients-6.3.23-1.el7.x86_64.rpm /foundationdb-clients-6.3.23-1.el7.x86_64.rpm
+COPY ./unified/foundationdb-server-6.3.23-1.el7.x86_64.rpm /foundationdb-server-6.3.23-1.el7.x86_64.rpm
+RUN yum localinstall -y /foundationdb-clients-6.3.23-1.el7.x86_64.rpm /foundationdb-server-6.3.23-1.el7.x86_64.rpm && \
+    rm -f /foundationdb-clients-6.3.23-1.el7.x86_64.rpm /foundationdb-server-6.3.23-1.el7.x86_64.rpm
+
+# install minio
+COPY ./unified/minio.rpm /minio.rpm
+RUN yum localinstall -y /minio.rpm && \
+    rm -f /minio.rpm
+
+# install liboss2
+COPY ./liboss2 /liboss2
+RUN cd /liboss2 && mkdir build && cd build && \
+    source /opt/rh/devtoolset-10/enable && \
+    cmake -DCPP_STANDARD=17 -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
+    make -j8 install && rm -rf /liboss2
+
+# install XXXdata
+# offsite audit version
+#COPY ./hashdata-3.13.19_44291-1.el7.x86_64.rpm /hashdata-3.13.19_44291-1.el7.x86_64.rpm
+#COPY ./hashdata-3.13.11_33828-1.el7.x86_64.rpm /hashdata-3.13.11_33828-1.el7.x86_64.rpm
+#RUN yum localinstall -y /hashdata-3.13.11_33828-1.el7.x86_64.rpm && \
+#    cp /opt/gpsql/bin/catalog /usr/local/bin/catalog
+
+# install rocksdb
+#COPY ./rocksdb /rocksdb
+#RUN cd /rocksdb && mkdir build && cd build && \
+#    source /opt/rh/devtoolset-10/enable && \
+#    cmake -DWITH_SNAPPY=ON \
+#          -DWITH_GFLAGS=OFF \
+#          -DWITH_TESTS=OFF \
+#          -DCMAKE_BUILD_TYPE=Release \
+#          -DCPP_STANDARD=17 \
+#          -DCMAKE_INSTALL_PREFIX=/usr/local .. && \
+#    make -j8 install && rm -rf /rocksdb && \
+#    ln -s /usr/local/lib64/librocksdb.so.6 /usr/lib64/librocksdb.so.6.20
+
+# install hostfiles
+COPY ./fdb.cluster /etc/foundationdb/fdb.cluster
+COPY ./hostfile /tmp/hostfile
+COPY ./uuids /tmp/uuids
+
+# install oh-my-zsh
+COPY ./install-zsh.sh /install-zsh.sh
+
+# install reset-etcd
+COPY ./unified/reset-etcd /usr/local/bin/
+RUN chmod +x /usr/local/bin/reset-etcd
+
+# install reset-minio
+COPY ./unified/reset-minio /usr/local/bin/
+COPY ./unified/mc /usr/local/bin
+RUN chmod +x /usr/local/bin/reset-minio && \
+    chmod +x /usr/local/bin/mc
+
+# install reset-fdb
+COPY ./unified/reset-fdb /usr/local/bin/
+COPY ./fdb_backup_v6323 /backup_v1
+RUN chmod +x /usr/local/bin/reset-fdb && \
+    chown -R wy:wy /backup_v1
+
+# initial built-in catalog
+VOLUME /var/lib/catalog
+COPY ./bin/metainspect /usr/local/bin/
+COPY ./unified/reset-catalog /usr/local/bin/
+RUN chmod +x /usr/local/bin/reset-catalog
+
+USER wy
+RUN /install-zsh.sh
+
+ENTRYPOINT ["bash", "-c", "while true; do sleep 3600; done"]
+#ENTRYPOINT ["bash", "-c", "sudo /usr/sbin/sshd && sudo chown -R wy:wy /var/lib/catalog"]
+

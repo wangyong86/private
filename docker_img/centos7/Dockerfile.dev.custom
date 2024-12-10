@@ -1,0 +1,54 @@
+FROM wy-cndbbase:v2
+
+# enhanced sys inspect tools
+RUN sudo yum install -y dmidecode cpuid
+
+# enhanced dev tools
+RUN sudo yum install -y texinfo devtoolset-10 ccache tmux man man-pages tree w3m cloc jq
+
+# system performance tool, sar(sysstat)
+RUN sudo yum install -y sysstat dstat perf htop atop
+
+# net perf, including netstat, uperf && perftest for IB/RDMA
+RUN sudo yum install -y iperf nmon tcpdump
+
+# disk perf; including iostat 
+RUN sudo yum install -y blktrace lsof
+# iotop can't be used in docker for absent docker support of netlink component
+# RUN sudo yum install -y iotop 
+
+# CPU, including pidstat, lscpu, pstree(psmisc)
+RUN sudo yum install -y perf psmisc
+
+# Memory, including vmstat, free, pmap
+RUN sudo yum install -y smem
+
+# Benchmark tool, only installable by yum
+#  * older tool: iozone, iometer
+#  * metadata: mdtest
+#  * ssd: ioping
+RUN sudo yum install -y fio
+
+# set github ssh key
+RUN mkdir -p /home/wy/.ssh
+COPY ./id_rsa /home/wy/.ssh/
+COPY ./authorized_keys /home/wy/.ssh/
+RUN chmod 600 /home/wy/.ssh/id_rsa && \
+    chmod 600 /home/wy/.ssh/authorized_keys && \
+    echo "StrictHostKeyChecking no" >> /home/wy/.ssh/config && \
+    chmod 600 /home/wy/.ssh/config && \
+    chown -R wy:wy /home/wy/.ssh
+
+RUN useradd -G wheel gpadmin && \
+    mkidr -p /home/gpadmin/.ssh
+
+USER wy
+
+COPY ./git-completion.sh /home/wy/.git-completion
+
+COPY ./install_from_git.sh /install_from_git.sh
+
+RUN sh /install_from_git.sh
+
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=$GITHUB_TOKEN
