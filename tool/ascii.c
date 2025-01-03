@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define MAX_CHAR 127
-#define MIN_PRINTABLE 33
+#define MIN_PRINTABLE 32
 #define MAX_PRINTABLE 126
 #define CHAR_PER_LINE 8
 int main()
