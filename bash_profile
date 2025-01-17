@@ -46,6 +46,9 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_
 
 # tool modify
 alias tmux="tmux -u -2"
+alias tmuxls="tmux list-session"
+alias tmuxat="tmux attach-session -t"
+alias tmuxnew="tmux new -s"
 alias gti="git"
 alias vim="$VIMDIR/bin/vim -O"
 alias vi="vim"
