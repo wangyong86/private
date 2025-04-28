@@ -40,9 +40,10 @@ if [ "$1" == "-i" ]; then
 	#rebuild ctags
 	make_ctags $opt
     cd -
-fi 
+fi
 
 #create demo-cluster simple
+# MASTER_DATAIDR=xxx mytool -d -t
 baseport=5658
 segnum=3
 if [ "$1" == "-d" ]; then
@@ -50,7 +51,7 @@ if [ "$1" == "-d" ]; then
 	if [ $# -eq 2 ]; then
 
 		# regression test mode: 3 segment, 3 mirror
-		if [ "$2" == "-t" ]; then 
+		if [ "$2" == "-t" ]; then
     		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=$segnum
 		elif [ "$2" == "-f" ]; then  #fast mode
     		make create-demo-cluster PORT_BASE=$baseport WITH_MIRRORS=false
@@ -72,7 +73,7 @@ if [ "$1" == "-d" ]; then
 	exit 0
 fi
 
-#full refresh system-weight refresh 
+#full refresh system-weight refresh
 if [ "$1" == "-w" ]; then
 	parallel=72
 	host=`hostname`
@@ -109,7 +110,7 @@ if [ "$1" == "-w" ]; then
 		parallel=8
 	fi
 	code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qar
-	#code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qa && mytool -d 
+	#code && make clean && make -sj$parallel && mkmars && code && make -j8 install && gpstop -qa && mytool -d
 fi
 
 OLDGPHOME=$GPHOME
@@ -124,7 +125,7 @@ if [ "$1" == "-c" ]; then
 
 	# matrixdb develope mode
 	#CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ../matrixdb/configure --with-perl --with-python --disable-debug --disable-cassert --disable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --enable-enterprise --without-mysqlfdw --without-mongofdw --with-openssl --without-licensecheck --enable-mxvector --prefix=$OLDGPHOME
-    
+
 	#simple perf mode
 	#CFLAGS='-O3 -g3' CXXFLAGS='-O3 -g3' ./configure --with-perl --with-python --disable-debug --enable-cassert --disable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --enable-enterprise --without-mysqlfdw --without-mongofdw --with-openssl --without-licensecheck --enable-mxvector --prefix=$OLDGPHOME
 
@@ -158,16 +159,16 @@ fi
 #install check
 if [ "$1" == "-t" ]; then
 	code
-    #PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off' make installcheck -C $RTPATH 
+    #PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off' make installcheck -C $RTPATH
     #PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off -c enable_partitionwise_join=off -c enable_partitionwise_aggregate=off -c gp_enable_global_deadlock_detector=off' make installcheck -C $RTPATH 
-    PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off -c enable_partitionwise_join=off -c enable_partitionwise_aggregate=off' make installcheck -C $RTPATH 
+    PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off -c enable_partitionwise_join=off -c enable_partitionwise_aggregate=off' make installcheck -C $RTPATH
     cd -
 	exit 0
 fi
 
 if [ "$1" == "-m" ]; then
 	code
-    PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off' make installcheck -C $MPATH 
+    PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off' make installcheck -C $MPATH
     cd -
 	exit 0
 fi
