@@ -7,7 +7,7 @@
     cp = cherry-pick
     fe = fetch
     lg = log --stat
-    rb = pull --rebase 
+    rb = pull --rebase --autostash
     st = status
     sh = show
     patch = format-patch
