@@ -9,19 +9,16 @@ function help()
     echo "          -d: make demo cluster. default: 1p; -t: 3p 3m"
     echo "          -i: build cscope index and ctags"
     echo "          -l: reconstruct demo cluster lighweight"
-    echo "          -s: import greenplum and demo cluster config"
-    echo "          -t: matrixdb regression test"
     echo "          -w: reconstruct demo cluster heavily, include rebuild cluster"
 }
 
 if [ $# -eq 0 ]; then
-    echo " must has parameter"
+    echo " exit because no parameters"
     help;
     exit -1
 fi
 
 source ~/.bash_profile
-#echo $1
 if [ "$1" == "-i" ]; then
 	#mostly, we build meta for matrixdb
 	dir=$GPSRC
@@ -69,11 +66,10 @@ if [ "$1" == "-d" ]; then
     fi
 
     createdb t
-#	gpconfig -c gp_vmem_idle_resource_timeout -v 0
-#	gpconfig -c enable_parallel_mode -v off 
 	gpstop -u
 
     cd -
+	exit 0
 fi
 
 #full refresh system-weight refresh 
@@ -84,6 +80,7 @@ if [ "$1" == "-w" ]; then
 		parallel=8
 	fi
 	code && make distclean && mytool -c && make -sj$parallel && mkmars && code && make -j8 install && gpstop -raqi
+	exit 0
 fi
 
 if [ "$1" == "-l" ]; then
@@ -102,6 +99,7 @@ if [ "$1" == "-l" ]; then
 	make -j$parallel && make -j$parallel install && gpstop -raqi
 	#make -sj && mkmars && code && make -j install && gpstop -raqi
 	cd -
+	exit 0
 fi
 
 if [ "$1" == "-w" ]; then
@@ -118,6 +116,11 @@ OLDGPHOME=$GPHOME
 if [ "$1" == "-c" ]; then
 	#cloudnative develope mode
 	CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-perl --with-python --enable-debug --enable-cassert --enable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --with-openssl --prefix=$OLDGPHOME
+
+	#gp 9.4.26
+	# disable-assert to workround orca wrapper termindate asssert fail
+	# -Wno-implicit-fallthrough for GCC10
+	#CFLAGS='-O0 -g3 -Wno-implicit-fallthrough' CXXFLAGS='-O0 -g3' ./configure --with-perl --with-python --enable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --with-openssl --prefix=$OLDGPHOME
 
 	# matrixdb develope mode
 	#CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ../matrixdb/configure --with-perl --with-python --disable-debug --disable-cassert --disable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --enable-enterprise --without-mysqlfdw --without-mongofdw --with-openssl --without-licensecheck --enable-mxvector --prefix=$OLDGPHOME
@@ -149,6 +152,7 @@ if [ "$1" == "-c" ]; then
     #CFLAGS='-O0 -g' CXXFLAGS='-O0 -g' ./configure --with-blocksize=32 --disable-orca --enable-cassert --with-openssl --with-perl --with-python --with-libxml --with-gssapi --enable-debug --enable-depend --prefix=$OLDGPHOME
 	#cd -
     echo "config matrixdb finished"
+	exit 0
 fi
 
 #install check
@@ -158,10 +162,12 @@ if [ "$1" == "-t" ]; then
     #PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off -c enable_partitionwise_join=off -c enable_partitionwise_aggregate=off -c gp_enable_global_deadlock_detector=off' make installcheck -C $RTPATH 
     PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off -c enable_partitionwise_join=off -c enable_partitionwise_aggregate=off' make installcheck -C $RTPATH 
     cd -
+	exit 0
 fi
 
 if [ "$1" == "-m" ]; then
 	code
     PGOPTIONS='-c enable_parallel_mode=off -c enable_mergejoin=off -c enable_nestloop=off' make installcheck -C $MPATH 
     cd -
+	exit 0
 fi

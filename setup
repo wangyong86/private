@@ -9,12 +9,12 @@ function restore_deep()
 function restore_shallow()
 {
 	cp .gitconfig $targetpath
-	cp .gdbinit $targetpath	
-	cp .vimrc $targetpath	
-	cp .screenrc $targetpath	
+	cp .gdbinit $targetpath
+	cp .vimrc $targetpath
+	cp .screenrc $targetpath
 	cp .tmux.conf $targetpath
-	
-    cp .bash_profile $targetpath	
+
+    cp .bash_profile $targetpath
 	echo "export CFGROOT=/home/wy" >> $targetpath/.bashrc
 	echo "source \$CFGROOT/private/bash_profile" >> $targetpath/.bashrc
 	echo "export USER=wy" >> $targetpath/.bashrc
