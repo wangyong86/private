@@ -14,7 +14,7 @@ function restore_shallow()
 	cp .screenrc $targetpath
 	cp .tmux.conf $targetpath
 
-    cp .bash_profile $targetpath
+	cp .bash_profile $targetpath
 	echo "export CFGROOT=/home/wy" >> $targetpath/.bashrc
 	echo "source \$CFGROOT/private/bash_profile" >> $targetpath/.bashrc
 	echo "export USER=wy" >> $targetpath/.bashrc
@@ -27,20 +27,20 @@ function restore_shallow()
 if [ $# = 0 ]; then
 	restore_shallow
 
-    # Take new config effective
-    source ~/.bashrc
+	# Take new config effective
+	source ~/.bashrc
 
-    # install vundle
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+	# install vundle
+	git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
 	# plugin
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 	# color scheme
-    git clone git@github.com:egel/tmux-gruvbox.git
+	git clone git@github.com:egel/tmux-gruvbox.git
 
-    # pg formatter
-    git clone git@github.com:darold/pgFormatter.git
+	# pg formatter
+	git clone git@github.com:darold/pgFormatter.git
 
 	unzip -d ~/.vim taglist_46.zip
 
@@ -54,7 +54,7 @@ if [ $# = 0 ]; then
 	#bear
 	#git clone git@github.com:rizsotto/Bear.git
 
-    # if autodie.pm is missing, install it
-    # wget https://cpan.metacpan.org/authors/id/T/TO/TODDR/autodie-2.34.tar.gz
+	# if autodie.pm is missing, install it
+	# wget https://cpan.metacpan.org/authors/id/T/TO/TODDR/autodie-2.34.tar.gz
 	exit 0
 fi
