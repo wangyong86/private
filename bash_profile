@@ -20,7 +20,7 @@ fi
 
 # host relate config
 # mac book
-if [ "$HOSTNAME" = wydev ]; then 
+if [ "$HOSTNAME" = wydev ]; then
 	export GPHOME=/home/wy/gpdb
 	export GPSRC=~/matrixdb
 # docker
@@ -28,7 +28,7 @@ elif [ "$HOSTNAME" = sdw1 ]; then
 	export GPHOME=$WORKSPACE_DIR/gpdb
 	export GPSRC=/workspace/matrixdb
 #server
-else 
+else
 	export GPHOME=/home/wy/gpdb
 	export GPSRC=~/matrixdb
 fi
@@ -40,8 +40,27 @@ fi
 export RTPATH=$GPSRC/src/test/regress
 export CPATH=$GPSRC/contrib
 
-export PATH=/opt/MegaRAID/MegaCli/:$HOME/install/bin:$TSBS/bin:$GIT:$PATH:$LLVM/build/bin:$GPHOME/sbin:$GPHOME/bin:$HOME/private/exec/:$GPSRC/:$REGRESS_TEST_PATH
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_CONFIG_PATH
+OPTIONAL_BINDIRS=(
+    "$HOME/.local/bin"
+    "/opt/MegaRAID/MegaCli"
+    "$HOME/install/bin"
+	"$TSBS/bin"
+	"$GIT"
+	"$LLVM/build/bin"
+	"$GPHOME/sbin"
+	"$GPHOME/bin"
+	"$HOME/private/exec"
+	"$GPSRC"
+	"$REGRESS_TEST_PATH"
+)
+
+# (^|:): match line begin or :
+for dir in "${OPTIONAL_BINDIRS[@]}"; do
+	test -d "$dir" && ! echo "$PATH" | grep -q -E "(^|:)$dir($|:)" && PATH="$dir:$PATH"
+done
+
+export PATH
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64
 
 # tool modify

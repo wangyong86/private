@@ -46,3 +46,6 @@ alias qd="cd $DD/qddir/demoDataDir-1/base"
 alias logd="cd $DD/qddir/demoDataDir-1/log"
 
 alias upsql="PGOPTIONS='-c gp_role=utility' psql"
+
+alias syi="sudo yum install -y"
+alias sys="sudo yum search"
