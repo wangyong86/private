@@ -1,0 +1,9 @@
+FROM wy-devbase:v1
+
+RUN sudo yum install -y sysstat texinfo
+
+COPY ./install_from_git.sh /install_from_git.sh
+RUN sh /install_from_git.sh
+
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=$GITHUB_TOKEN

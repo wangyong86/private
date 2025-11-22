@@ -1,4 +1,13 @@
-FROM wy-dev-custom:v2
+FROM wy-dev-custom:v3
+
+USER root
+
+COPY ./gpadmin/* /home/gpadmin/.ssh/
+RUN chmod 600 /home/gpadmin/.ssh/id_rsa && \
+    chmod 600 /home/gpadmin/.ssh/authorized_keys && \
+    echo "StrictHostKeyChecking no" >> /home/gpadmin/.ssh/config && \
+    chmod 600 /home/gpadmin/.ssh/config && \
+    chown -R gpadmin:gpadmin /home/gpadmin/.ssh
 
 USER root
 
@@ -98,7 +107,7 @@ COPY ./unified/reset-catalog /usr/local/bin/
 RUN chmod +x /usr/local/bin/reset-catalog
 
 USER wy
-RUN /install-zsh.sh
+#RUN /install-zsh.sh
 
 ENTRYPOINT ["bash", "-c", "while true; do sleep 3600; done"]
 #ENTRYPOINT ["bash", "-c", "sudo /usr/sbin/sshd && sudo chown -R wy:wy /var/lib/catalog"]

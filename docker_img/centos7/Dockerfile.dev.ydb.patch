@@ -1,0 +1,13 @@
+FROM wy-dev-ydb:v2
+
+USER root
+
+RUN useradd -G wheel gpadmin && mkdir -p /home/gpadmin/.ssh
+COPY ./gpadmin/* /home/gpadmin/.ssh/
+RUN chmod 600 /home/gpadmin/.ssh/id_rsa && \
+    chmod 600 /home/gpadmin/.ssh/authorized_keys && \
+    echo "StrictHostKeyChecking no" >> /home/gpadmin/.ssh/config && \
+    chmod 600 /home/gpadmin/.ssh/config && \
+    chown -R gpadmin:gpadmin /home/gpadmin/.ssh
+
+USER wy

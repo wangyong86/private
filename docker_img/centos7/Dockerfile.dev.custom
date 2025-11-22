@@ -1,7 +1,12 @@
-FROM wy-cndbbase:v2
+FROM wy-cndbbase:v3
+
+# Additional utility by wy
+RUN sudo dnf install -y 'dnf-command(config-manager)' && \
+		sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
+		sudo dnf install -y gh
 
 # enhanced sys inspect tools
-RUN sudo yum install -y dmidecode cpuid
+        RUN sudo yum install -y dmidecode cpuid
 
 # enhanced dev tools
 RUN sudo yum install -y texinfo devtoolset-10 ccache tmux man man-pages tree w3m cloc jq
@@ -20,7 +25,7 @@ RUN sudo yum install -y blktrace lsof
 # CPU, including pidstat, lscpu, pstree(psmisc)
 RUN sudo yum install -y perf psmisc
 
-# Memory, including vmstat, free, pmap
+# Memory, including vmstat, free, pmap, 
 RUN sudo yum install -y smem
 
 # Benchmark tool, only installable by yum
@@ -40,7 +45,7 @@ RUN chmod 600 /home/wy/.ssh/id_rsa && \
     chown -R wy:wy /home/wy/.ssh
 
 RUN useradd -G wheel gpadmin && \
-    mkidr -p /home/gpadmin/.ssh
+    mkdir -p /home/gpadmin/.ssh
 
 USER wy
 
