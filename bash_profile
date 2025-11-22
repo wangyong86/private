@@ -65,8 +65,6 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig${PKG_
 
 # tool modify
 alias tmux="tmux -u -2"
-alias tmuxls="tmux list-session"
-alias tmuxat="tmux attach-session -t"
 alias tmuxnew="tmux new -s"
 alias gti="git"
 alias vim="$VIMDIR/bin/vim -O"
@@ -87,39 +85,20 @@ alias psg="ps -ef|grep "
 source ~/private/bash_dynamic_alias
 
 # command compound
-alias src="source $GPHOME/greenplum_path.sh;source $GPDEMO/gpdemo-env.sh"
 alias g11="source /opt/rh/devtoolset-11/enable"
 alias g10="source /opt/rh/devtoolset-10/enable"
-alias g9="source /opt/rh/devtoolset-9/enable"
-alias g8="source /opt/rh/devtoolset-8/enable"
-alias g7="source /opt/rh/devtoolset-7/enable"
 
 alias xmake="compiledb make"
 alias ftime='/usr/bin/time -f "\n---------------------------------\nElapseTime(m:s):\t"%E"\nKernelTime(s):\t"%S"\nUserTime(s):\t"%U"\nCPUPercentage:\t"%P"\nMaxResidnetMem(Kb):\t"%M"\nAvgDataMem(Kb):\t"%D"\nInvolCS:\t"%c"\nVolCS:\t"%w"\nFsInput:\t"%I"\nFsOuput:\t"%O"\nSkRcv:\t"%r"\nSkSnd:\t"%s'
 
 alias psql='psql -P pager=off -v ECHO=all'
 
-# Database
-export PGDATABASE=t
-
-export CC="ccache gcc"
-
-export CPP="ccache cpp"
-
-export CXX="ccache g++"
+#export CC="ccache gcc"
+#export CPP="ccache cpp"
+#export CXX="ccache g++"
 
 # For tmux, it may incur unknown env change at very early stage(before loading
 # /etc/profile
-#unset CC; unset CXX
-
-#use gcc as high as possible, gcc7 is smallest one
-if [ -f /opt/rh/devtoolset-10/enable ]; then
-	source /opt/rh/devtoolset-10/enable
-elif [ -f /opt/rh/devtoolset-11/enable ]; then
-	source /opt/rh/devtoolset-11/enable
-elif [ -f /opt/rh/devtoolset-7/enable ]; then
-	source /opt/rh/devtoolset-7/enable
-fi
 
 # add git completion manually
 if [ -f ~/.git-completion ]; then
