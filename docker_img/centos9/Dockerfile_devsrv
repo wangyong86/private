@@ -1,0 +1,4 @@
+FROM centos9-server:v1
+
+RUN sudo yum install -y texinfo bear gdb-14.2-4.1.el9_6.x86_64 bpftrace
+
