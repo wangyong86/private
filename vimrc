@@ -84,7 +84,7 @@ call vundle#end()            " required
 call plug#begin()
 
 " Use release branch (recommended)
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'gyim/vim-boxdraw'
 
