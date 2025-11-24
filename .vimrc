@@ -1,1 +1,1 @@
-source $CFGROOT/private/vimrc
+source /home/wy/private/vimrc
