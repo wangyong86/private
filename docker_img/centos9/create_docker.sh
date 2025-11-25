@@ -25,7 +25,8 @@ sleep 1
 #fi
 
 # Container creation and configuration
-image_name="centos9-server:v1"
+image_name="centos9-devsrv:v1"
+#image_name="centos9-server:v1"
 #image_name="docker.1ms.run/rockylinux/rockylinux:9-ubi-init"
 #image_name="rockylinux/rockylinux:9-ubi-init"
 #image_name="cr.kylinos.cn/kylin/kylin-server-v10sp3-aarch64:20230324"

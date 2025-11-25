@@ -2,3 +2,20 @@ FROM centos9-server:v1
 
 RUN sudo yum install -y texinfo bear gdb-14.2-4.1.el9_6.x86_64 bpftrace
 
+RUN echo ". /usr/share/bash-completion/completions/git" >> ~/.bash_profile
+
+RUN mkdir /home/wy/.cargo
+COPY ./config.toml /home/wy/.cargo/
+RUN source ~/.bash_profile && \
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+RUN mkdir -p /home/wy/.config/nvim/lua/config && \
+	mkdir -p /home/wy/.config/nvim/lua/plugins
+COPY nvim/options.lua /home/wy/.config/nvim/lua/config/
+COPY nvim/basic.lua /home/wy/.config/nvim/lua/plugins/
+COPY nvim/init.lua /home/wy/.config/nvim/
+
+RUN sudo yum install -y cscope ctags
+
+COPY pg_dev_dependency.sh /
+RUN sudo sh pg_dev_dependency.sh

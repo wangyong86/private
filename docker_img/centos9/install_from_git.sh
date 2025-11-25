@@ -20,6 +20,7 @@ git clone git@github.com:wangyong86/private.git
 cd private && sh setup
 
 #pg_format tool
+git clone git@github.com:darold/pgFormatter.git
 cd pgFormatter && perl Makefile.PL && make -j && sudo make -j install
 cd
 
