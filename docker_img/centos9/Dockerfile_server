@@ -18,7 +18,7 @@ RUN yum install -y --allowerasing sudo tmux shadow passwd git cpio clangd vim \
 RUN yum install -y sysstat dstat perf htop atop
 
 # net perf, including netstat, uperf && perftest for IB/RDMA
-RUN yum install -y iperf nmon tcpdump
+RUN yum install -y iperf nmon tcpdump iproute 
 
 # disk perf; including iostat
 RUN yum install -y blktrace lsof
@@ -27,7 +27,7 @@ RUN yum install -y blktrace lsof
 # RUN sudo yum install -y iotop
 
 # CPU, including pidstat, lscpu, pstree(psmisc)
-RUN yum install -y perf psmisc
+RUN yum install -y perf psmisc cpuid
 
 # Memory, including vmstat, free, pmap,
 RUN yum install -y smem
@@ -37,7 +37,7 @@ RUN yum install -y fio
 RUN yum install -y strace 
 
 # other tools
-RUN yum install -y iproute dmidecode cpuid
+RUN yum install -y dmidecode
 
 RUN useradd -m -u 1000 wy && \
 	usermod -G wheel wy && \

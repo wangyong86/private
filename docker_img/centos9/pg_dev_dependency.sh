@@ -11,9 +11,6 @@ sudo yum install -y \
     libxslt-devel \
     libicu-devel \
     openssl-devel \
-    geos-devel \
-    proj-devel \
-    gdal-devel \
     json-c-devel \
     protobuf-c-devel \
     uuid-devel \
@@ -30,3 +27,8 @@ sudo yum install -y \
     patch \
     which \
     gcc-c++
+
+#sudo yum install -y
+#    proj-devel \
+#    geos-devel \
+#    gdal-devel \
