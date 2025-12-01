@@ -108,9 +108,7 @@ filetype plugin indent on    " required
 " ========================== END settingn for Vundle
 
 " detailed:https://github.com/morhetz/gruvbox/wiki/
-" autocmd vimenter * ++nested colorscheme gruvbox
 " We should use the upper cmdline, but for lower version of vim, just use:
-colorscheme gruvbox
 
 " Inside tmux, vim maybe set as bg=light, set as dark explicitly
 set bg=dark
@@ -120,6 +118,8 @@ set number
 " shift width, tab stop width
 set ts=4 sw=4
 " set et
+" expandtab for python
+autocmd FileType python setlocal expandtab shiftwidth=4 softtabstop=4
 
 "set noet
 
