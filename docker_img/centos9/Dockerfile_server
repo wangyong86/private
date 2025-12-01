@@ -54,7 +54,8 @@ RUN chmod 600 /home/wy/.ssh/id_rsa && \
 
 USER wy
 
-COPY pip /home/wy/.pip
+RUN sudo mkdir /home/wy/.pip
+COPY pip /home/wy/.pip/pip.confg
 COPY ./install_from_git.sh /install_from_git.sh
 RUN sh /install_from_git.sh
 
