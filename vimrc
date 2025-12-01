@@ -93,6 +93,7 @@ Plug 'tpope/vim-sensible'
 
 call plug#end()
 
+colorscheme gruvbox
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
