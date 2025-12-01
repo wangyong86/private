@@ -62,10 +62,11 @@ RUN sh /install_from_git.sh
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 RUN echo "source /home/wy/private/vimrc" > /home/wy/.vimrc
-RUN sed -i "/colorscheme gruvbox/d" /home/wy/private/vimrc
 
+RUN sed -i 's/colorscheme gruvbox/\" colorscheme gruvbox/' /home/wy/private/vimrc
 RUN vim -c "PluginInstall" -c "qa!"
 RUN vim -c "PlugInstall" -c "qa!"
+RUN sed -i 's/\" colorscheme gruvbox/colorscheme gruvbox/' /home/wy/private/vimrc
 
 RUN echo "export RUSTUP_DIST_SERVER=\"https://rsproxy.cn\"" >> ~/.bash_profile
 RUN echo "export RUSTUP_UPDATE_ROOT=\"https://rsproxy.cn/rustup\"" >> ~/.bash_profile
