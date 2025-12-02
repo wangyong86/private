@@ -28,7 +28,7 @@ RUN yum install -y blktrace lsof
 # RUN sudo yum install -y iotop
 
 # CPU, including pidstat, lscpu, pstree(psmisc)
-RUN yum install -y perf psmisc cpuid
+RUN yum install -y perf psmisc
 
 # Memory, including vmstat, free, pmap,
 RUN yum install -y smem

@@ -1,14 +1,15 @@
 #!/bin/bash
 set -x
 
-if [ $# -lt 2 ]; then
-    echo "Usage: create_docker.sh $dockername $port "
+if [ $# -lt 4 ]; then
+    echo "Usage: create_docker.sh $imagename $dockername $port $wordir"
     exit -1
 fi
 
-dockername=$1
-port=$2
-workdir=/home/wy/data/
+imagename=$1
+dockername=$2
+port=$3
+workdir=$4
 container_name=${dockername}
 
 # Stop and clean up existing wydev_arm
@@ -25,7 +26,7 @@ sleep 1
 #fi
 
 # Container creation and configuration
-image_name="centos9-devsrv:v1"
+image_name=$imagename
 #image_name="centos9-server:v1"
 #image_name="docker.1ms.run/rockylinux/rockylinux:9-ubi-init"
 #image_name="rockylinux/rockylinux:9-ubi-init"
