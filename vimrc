@@ -31,10 +31,6 @@ Plugin 'jlanzarotta/bufexplorer'
 " eye pleasant color scheme:
 Plugin 'morhetz/gruvbox'
 
-" detailed intro: https://www.jianshu.com/p/27d7fbd6cdc6
-" YCM installation is complex on older platform, disable for now
-" Plugin 'Valloric/YouCompleteMe'
-
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
 " plugin on GitHub repo
