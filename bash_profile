@@ -41,9 +41,9 @@ export RTPATH=$GPSRC/src/test/regress
 export CPATH=$GPSRC/contrib
 
 OPTIONAL_BINDIRS=(
-    "$HOME/.local/bin"
-    "/opt/MegaRAID/MegaCli"
-    "$HOME/install/bin"
+  "$HOME/.local/bin"
+  "/opt/MegaRAID/MegaCli"
+  "$HOME/install/bin"
 	"$TSBS/bin"
 	"$GIT"
 	"$LLVM/build/bin"
@@ -92,6 +92,9 @@ alias xmake="compiledb make"
 alias ftime='/usr/bin/time -f "\n---------------------------------\nElapseTime(m:s):\t"%E"\nKernelTime(s):\t"%S"\nUserTime(s):\t"%U"\nCPUPercentage:\t"%P"\nMaxResidnetMem(Kb):\t"%M"\nAvgDataMem(Kb):\t"%D"\nInvolCS:\t"%c"\nVolCS:\t"%w"\nFsInput:\t"%I"\nFsOuput:\t"%O"\nSkRcv:\t"%r"\nSkSnd:\t"%s'
 
 alias psql='psql -P pager=off -v ECHO=all'
+
+# Database
+export PGDATABASE=postgres
 
 #export CC="ccache gcc"
 #export CPP="ccache cpp"

@@ -68,7 +68,6 @@ RUN vim -c "PluginInstall" -c "qa!"
 RUN vim -c "PlugInstall" -c "qa!"
 RUN sed -i 's/\" colorscheme gruvbox/colorscheme gruvbox/' /home/wy/private/vimrc
 
-RUN echo "export RUSTUP_DIST_SERVER=\"https://rsproxy.cn\"" >> ~/.bash_profile
-RUN echo "export RUSTUP_UPDATE_ROOT=\"https://rsproxy.cn/rustup\"" >> ~/.bash_profile
-RUN echo "alias ls='ls --color=auto'" >> ~/.bash_profile
-RUN echo "alias ll='ls -l'" >> ~/.bash_profile
+# modify user env
+COPY ./change_bash_profile.sh /change_bash_profile.sh
+RUN sh /change_bash_profile.sh
