@@ -10,6 +10,8 @@ go tool pprof -inuse_space http://localhost:8080/debug/pprof/heap
 * go tool pprof http://localhost:8080/debug/pprof/profile
 * flame graph: go tool pprof -http=:8000 http://127.0.0.1:6060/debug/pprof/profile
 
+# flamegraph
+ go tool pprof -svg http://127.0.0.1:8080/debug/pprof/profile > flamegraph.svg
 
 # stac
 * go tool pprof http://localhost:8080/debug/pprof/goroutine
