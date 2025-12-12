@@ -36,8 +36,11 @@ RUN yum install -y fio
 
 RUN yum install -y strace 
 
-# other tools
+# hardware tools
 RUN yum install -y dmidecode
+
+# system utility
+RUN yum install -y graphviz
 
 RUN useradd -m -u 1000 wy && \
 	usermod -G wheel wy && \
