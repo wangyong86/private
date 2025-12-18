@@ -11,6 +11,7 @@ RUN wget https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/Packages/e/ep
 RUN dnf install -y 'dnf-command(config-manager)' && \
 	dnf config-manager --enable crb
 
+RUN sed -i 's/tsflags=nodocs/#tsflags=nodocs/' /etc/dnf/dnf.conf
 RUN yum install -y --allowerasing sudo tmux shadow passwd git cpio clangd vim \
 	cmake curl zip unzip tar wget man binutils  jq net-tools nmap iputils \
 	rpm-build rpmdevtools lz4 zstd tree man-pages cloc
