@@ -1,15 +1,16 @@
 #!/bin/bash
 set -x
 
-if [ $# -lt 4 ]; then
-    echo "Usage: create_docker.sh $imagename $dockername $port $wordir"
+if [ $# -lt 5 ]; then
+    echo "Usage: create_docker.sh \$imagename \$dockername \$port \$srvport \$workdir"
     exit -1
 fi
 
 imagename=$1
 dockername=$2
 port=$3
-workdir=$4
+srvport=$4
+workdir=$5
 container_name=${dockername}
 
 # Stop and clean up existing wydev_arm
@@ -48,6 +49,7 @@ sudo docker run -d --name $container_name \
            --privileged \
            --tmpfs="/dev/shm:rw,size=$container_tmpfs_size" \
            -p $port:22 \
+           -p $srvport:8911 \
            $image_name  \
            /bin/sh -c 'while true; do sleep 1; done'
            #which sshd /usr/sbin/sshd -D
