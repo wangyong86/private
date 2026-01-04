@@ -23,3 +23,6 @@ RUN sh /install_dev_from_git.sh
 
 COPY pg_dev_dependency.sh /pg_dev_dependency.sh
 RUN sudo sh /pg_dev_dependency.sh
+
+COPY pg_dev_dependency_ext.sh /pg_dev_dependency_ext.sh
+RUN sudo sh /pg_dev_dependency_ext.sh
