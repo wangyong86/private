@@ -1,0 +1,19 @@
+#/bin/env bash
+cloc . --by-file --csv --quiet | awk -F, '
+NR>1 {
+    gsub("^\\./", "", $2)      # 去掉 ./ 前缀
+    split($2, p, "/")
+
+    if (length(p[2]) == 0)
+        dir = "(root)"        # backend/age.c 这种
+    else
+        dir = p[1]            # catalog / parser / executor …
+
+    code[dir] += $5
+}
+END {
+    printf "%-20s %12s\n", "DIR", "CODE_LINES"
+    for (d in code)
+        printf "%-20s %12d\n", d, code[d]
+}' | sort -k2 -nr
+
