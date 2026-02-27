@@ -25,20 +25,18 @@ echo "Begin at: $(date)"
 
 # --- 3. 目录与解压逻辑 ---
 # 标准做法：先判断，不存在直接报错，不盲目 cd
-[ ! -d "$RELEASE_DIR" ] && die "Directory '$RELEASE_DIR' does not exist."
-cd "$RELEASE_DIR"
+cd "$RELEASE_DIR" || die "Directory '$RELEASE_DIR' does not exist."
 
 # 解压文件 (带基本检查)
-ls $SET_PKG_PATTERN >/dev/null 2>&1 || die "Package $SET_PKG_PATTERN not found in $RELEASE_DIR"
-tar xvzf $SET_PKG_PATTERN >/dev/null
+ls "$SET_PKG_PATTERN" >/dev/null 2>&1 || die "Package $SET_PKG_PATTERN not found in $RELEASE_DIR"
+tar xvzf "$SET_PKG_PATTERN" >/dev/null
 
 # 检查解压后的目标目录
-[ ! -d "$SET_TARGET_DIR" ] && die "Decompression failed: Directory '$SET_TARGET_DIR' not found."
+cd "$SET_TARGET_DIR" || die "Decompression failed: Directory '$SET_TARGET_DIR' not found."
 echo -e "${C_GREEN}OK:${C_NC} Decompressed package successfully"
-cd "$SET_TARGET_DIR"
 
 # --- 4. 依赖项检查 (deps) ---
-items=$(ls -1 deps 2>/dev/null | wc -l)
+items=$(find deps -maxdepth 1 -mindepth 1 2>/dev/null | wc -l)
 if [ "$items" -gt 1 ]; then
     echo -e "${C_RED}Error${C_NC}: Excessive files in deps. Detail:"
     ls -l deps
@@ -53,8 +51,7 @@ git log --oneline -n "$SET_LOG_NUM" 2>/dev/null || echo "  (Note: Not a git repo
 echo -ne "${C_NC}"
 
 # --- 6. 子模块合规性检查 (contrib) ---
-[ ! -d "contrib" ] && die "Missing 'contrib' directory."
-cd contrib
+cd contrib || die "Missing 'contrib' directory."
 
 # 检查 cnati (不应包含)
 if ls cnati* >/dev/null 2>&1; then
@@ -74,9 +71,9 @@ fi
 MARS_PATH="matrixts/mars2x"
 if [ -d "$MARS_PATH" ]; then
     echo -e "${C_GREEN}OK${C_NC}: $MARS_PATH exists"
-    
+
     # 文件数量校验
-    m_items=$(ls -1 "$MARS_PATH" | wc -l)
+    m_items=$(find "$MARS_PATH" -maxdepth 1 -mindepth 1| wc -l)
     if [ "$m_items" -gt 2 ]; then
         echo -e "${C_RED}Error${C_NC}: Excessive files in $MARS_PATH (Found: $m_items)"
     else
