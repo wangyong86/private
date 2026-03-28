@@ -9,7 +9,7 @@
     fe = fetch
     lg = log --stat
     rb = pull --rebase --autostash
-    st = status
+    st = status --short
     sh = show
     patch = format-patch
 
