@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evidence-Backed Design Writer"
+  short_description: "Write reviewable designs grounded in code and measurements"
+  default_prompt: "Use $write-evidence-backed-design to create or revise an evidence-backed technical design."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PostgreSQL Internals"
+  short_description: "Concept-first PostgreSQL internals explanations"
+  default_prompt: "Use $explaining-postgresql-internals to explain this PostgreSQL mechanism from source code."

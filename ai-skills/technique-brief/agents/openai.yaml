@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technique Brief"
+  short_description: "Write internal system design notes"
+  default_prompt: "Use $technique-brief to draft an internal technical design brief with a clear subsystem mental model and explicit constraints."

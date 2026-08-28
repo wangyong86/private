@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cross-Commit Absorption"
+  short_description: "Safely fold later fixes into earlier commits"
+  default_prompt: "Use $cross-commit-absorption to fold specified fix commits into their target commits while proving the final tree is unchanged."
