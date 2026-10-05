@@ -1,0 +1,143 @@
+#!/bin/bash
+# Build cscope and ctags indexes for one source tree.
+#
+# Usage:
+#   buildidx [--jobs N] [SOURCE_DIR]
+#
+# SOURCE_DIR defaults to the current directory. The generated indexes and
+# cscope.files stay in that source directory, matching the old mytool -i path.
+set -euo pipefail
+
+usage()
+{
+    cat <<'EOF'
+usage: buildidx [--jobs N] [SOURCE_DIR]
+
+Build cscope and ctags indexes for SOURCE_DIR (default: current directory).
+The gpAux/gpdemo directory is never populated with tags links.
+
+Options:
+  -j, --jobs N  Ctags workers, 1 through 16 (default: CPUs, capped at 8)
+  -h, --help    Show this help
+EOF
+}
+
+jobs=${MYTOOL_CTAGS_JOBS:-}
+if [[ -z $jobs ]]; then
+    jobs=$(getconf _NPROCESSORS_ONLN)
+    (( jobs <= 8 )) || jobs=8
+fi
+source_dir=.
+while (($#)); do
+    case "$1" in
+        -j|--jobs)
+            (($# >= 2)) || { echo "$1 requires a value" >&2; exit 2; }
+            jobs=$2
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            (($# <= 1)) || { usage >&2; exit 2; }
+            [[ $# -eq 0 ]] || source_dir=$1
+            break
+            ;;
+        -* )
+            echo "unknown option: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+        *)
+            [[ $source_dir == . ]] || { echo 'source directory specified twice' >&2; exit 2; }
+            source_dir=$1
+            shift
+            (($# == 0)) || { echo 'source directory specified twice' >&2; exit 2; }
+            ;;
+    esac
+done
+
+if [[ ! $jobs =~ ^([1-9]|1[0-6])$ ]]; then
+    echo '--jobs must be an integer from 1 to 16' >&2
+    exit 2
+fi
+command -v cscope >/dev/null || { echo "'cscope' program not found" >&2; exit 1; }
+
+tool_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+[[ -x $tool_dir/make_ctags ]] || {
+    echo "missing executable: $tool_dir/make_ctags" >&2
+    exit 1
+}
+
+cd -- "$source_dir"
+root=$(pwd -P)
+if [[ $root == *[[:space:]]* ]]; then
+    # cscope 15.9 stores this path in an unquoted form and cannot reopen the
+    # database later when the working root contains whitespace.
+    echo 'cscope requires a source root without whitespace' >&2
+    exit 1
+fi
+
+# One lock covers cscope.files and all cscope output files. Keep the lock file
+# in place: removing it while another invocation is waiting would create a new
+# inode and allow two builders to run concurrently.
+exec 9>cscope.build.lock
+flock -n 9 || { echo "another index build is running in $root" >&2; exit 1; }
+
+work=$(mktemp -d ./cscope.build.XXXXXX)
+pids=()
+cleanup()
+{
+    if ((${#pids[@]})); then
+        kill "${pids[@]}" 2>/dev/null || :
+        wait "${pids[@]}" 2>/dev/null || :
+    fi
+    rm -rf -- "$work"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
+
+# Keep the historical cscope extensions and exclusions. The double quotes
+# make paths with spaces readable by cscope; newline and double-quote paths are
+# outside cscope's line-based name-file format.
+find "$root" -type f \( -name '*.[ch]' -o -name '*.rs' \
+    -o -name '*.cpp' -o -name '*.cc' -o -name '*.go' \
+    -o -name '*.hpp' -o -name '*.py' \) \
+    ! -path '*/test/*' ! -path '*mars/*' \
+    ! -path '*aws-sdk-cpp*' ! -path '*protobuf*' \
+    -printf '"%p"\n' > "$work/files"
+mv -f -- "$work/files" cscope.files
+
+# cscope and ctags read the same source tree independently. Running them
+# together makes the total time close to the slower indexer.
+cscope -Rbkq -i cscope.files 2>"$work/cscope.log" &
+pids+=("$!")
+cscope_pid=$!
+MYTOOL_CTAGS_JOBS=$jobs "$tool_dir/make_ctags" 2>"$work/ctags.log" &
+pids+=("$!")
+ctags_pid=$!
+
+cscope_status=0
+ctags_status=0
+wait "$cscope_pid" || cscope_status=$?
+pids=("$ctags_pid")
+wait "$ctags_pid" || ctags_status=$?
+pids=()
+
+if ((cscope_status != 0)); then
+    cat "$work/cscope.log" >&2
+else
+    grep -v cannot "$work/cscope.log" || :
+fi
+# Show warnings on success as well, so a partial parse cannot pass silently.
+cat "$work/ctags.log" >&2
+if ((cscope_status != 0 || ctags_status != 0)); then
+    echo "index build failed: cscope=$cscope_status, ctags=$ctags_status" >&2
+    exit 1
+fi
+
+echo "buildidx finished: $root"
