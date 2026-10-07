@@ -1,0 +1,7 @@
+# shellcheck shell=bash disable=SC2034
+# Shared source selection for cscope and ctags (sourced, not executed).
+# Keep this file free of commands so both entry points use the same rules.
+
+INDEX_SOURCE_EXTENSIONS=(c h y l rs cpp cc go hpp py)
+# Match a directory named test; keep test_case.c, tests/ and unittest/.
+INDEX_EXCLUDE_PATHS=('*/test/*')

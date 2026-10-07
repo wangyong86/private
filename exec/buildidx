@@ -2,7 +2,7 @@
 # Build cscope and ctags indexes for one source tree.
 #
 # Usage:
-#   buildidx [--jobs N] [SOURCE_DIR]
+#   buildidx [--force] [--jobs N] [SOURCE_DIR]
 #
 # SOURCE_DIR defaults to the current directory. The generated indexes and
 # cscope.files stay in that source directory, matching the old mytool -i path.
@@ -11,25 +11,37 @@ set -euo pipefail
 usage()
 {
     cat <<'EOF'
-usage: buildidx [--jobs N] [SOURCE_DIR]
+usage: buildidx [--force] [--jobs N] [SOURCE_DIR]
 
 Build cscope and ctags indexes for SOURCE_DIR (default: current directory).
 The gpAux/gpdemo directory is never populated with tags links.
+Ctags rebuilds only changed shards; cscope uses its native incremental update.
+Requires default Universal Ctags. Shared source rules: index_config.
 
 Options:
   -j, --jobs N  Ctags workers, 1 through 16 (default: CPUs, capped at 8)
+  -f, --force   Rebuild tags even when its cache matches
   -h, --help    Show this help
 EOF
 }
 
 jobs=${MYTOOL_CTAGS_JOBS:-}
 if [[ -z $jobs ]]; then
+    # Online logical CPUs are an upper bound, not a useful worker count by
+    # themselves. A 128-CPU machine still defaults to only eight ctags workers.
     jobs=$(getconf _NPROCESSORS_ONLN)
-    (( jobs <= 8 )) || jobs=8
+    if (( jobs > 8 )); then
+        jobs=8
+    fi
 fi
 source_dir=.
+tags_args=()
 while (($#)); do
     case "$1" in
+        -f|--force)
+            tags_args=(--force)
+            shift
+            ;;
         -j|--jobs)
             (($# >= 2)) || { echo "$1 requires a value" >&2; exit 2; }
             jobs=$2
@@ -51,7 +63,6 @@ while (($#)); do
             exit 2
             ;;
         *)
-            [[ $source_dir == . ]] || { echo 'source directory specified twice' >&2; exit 2; }
             source_dir=$1
             shift
             (($# == 0)) || { echo 'source directory specified twice' >&2; exit 2; }
@@ -59,10 +70,13 @@ while (($#)); do
     esac
 done
 
-if [[ ! $jobs =~ ^([1-9]|1[0-6])$ ]]; then
-    echo '--jobs must be an integer from 1 to 16' >&2
-    exit 2
-fi
+case "$jobs" in
+    [1-9]|1[0-6]) ;; # 1..9 or 10..16
+    *)
+        echo '--jobs must be an integer from 1 to 16' >&2
+        exit 2
+        ;;
+esac
 command -v cscope >/dev/null || { echo "'cscope' program not found" >&2; exit 1; }
 
 tool_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
@@ -70,6 +84,8 @@ tool_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
     echo "missing executable: $tool_dir/make_ctags" >&2
     exit 1
 }
+# shellcheck source=/dev/null
+source "$tool_dir/index_config"
 
 cd -- "$source_dir"
 root=$(pwd -P)
@@ -101,15 +117,21 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 trap 'exit 129' HUP
 
-# Keep the historical cscope extensions and exclusions. The double quotes
-# make paths with spaces readable by cscope; newline and double-quote paths are
-# outside cscope's line-based name-file format.
-find "$root" -type f \( -name '*.[ch]' -o -name '*.rs' \
-    -o -name '*.cpp' -o -name '*.cc' -o -name '*.go' \
-    -o -name '*.hpp' -o -name '*.py' \) \
-    ! -path '*/test/*' ! -path '*mars/*' \
-    ! -path '*aws-sdk-cpp*' ! -path '*protobuf*' \
-    -printf '"%p"\n' > "$work/files"
+# The double quotes make paths with spaces readable by cscope; newline and
+# double-quote paths are outside cscope's line-based name-file format.
+suffix_expr=()
+exclude_expr=()
+for extension in "${INDEX_SOURCE_EXTENSIONS[@]}"; do
+    if ((${#suffix_expr[@]})); then
+        suffix_expr+=(-o)
+    fi
+    suffix_expr+=(-name "*.$extension")
+done
+for excluded in "${INDEX_EXCLUDE_PATHS[@]}"; do
+    exclude_expr+=(! -path "$excluded")
+done
+find "$root" -type f \( "${suffix_expr[@]}" \) \
+    "${exclude_expr[@]}" -printf '"%p"\n' > "$work/files"
 mv -f -- "$work/files" cscope.files
 
 # cscope and ctags read the same source tree independently. Running them
@@ -117,7 +139,7 @@ mv -f -- "$work/files" cscope.files
 cscope -Rbkq -i cscope.files 2>"$work/cscope.log" &
 pids+=("$!")
 cscope_pid=$!
-MYTOOL_CTAGS_JOBS=$jobs "$tool_dir/make_ctags" 2>"$work/ctags.log" &
+MYTOOL_CTAGS_JOBS=$jobs "$tool_dir/make_ctags" "${tags_args[@]}" 2>"$work/ctags.log" &
 pids+=("$!")
 ctags_pid=$!
 
@@ -128,13 +150,8 @@ pids=("$ctags_pid")
 wait "$ctags_pid" || ctags_status=$?
 pids=()
 
-if ((cscope_status != 0)); then
-    cat "$work/cscope.log" >&2
-else
-    grep -v cannot "$work/cscope.log" || :
-fi
-# Show warnings on success as well, so a partial parse cannot pass silently.
-cat "$work/ctags.log" >&2
+# Show diagnostics from both tools, including warnings on a successful exit.
+cat "$work/cscope.log" "$work/ctags.log" >&2
 if ((cscope_status != 0 || ctags_status != 0)); then
     echo "index build failed: cscope=$cscope_status, ctags=$ctags_status" >&2
     exit 1

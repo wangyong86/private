@@ -3,7 +3,13 @@
 # Requires Bash and GNU find/sort, as used by the Linux development machines.
 set -euo pipefail
 
-[[ $# -eq 0 ]] || { echo "usage: make_ctags" >&2; exit 1; }
+force=0
+if [[ $# -eq 1 && ( $1 == -f || $1 == --force ) ]]; then
+    force=1
+elif [[ $# -ne 0 ]]; then
+    echo "usage: make_ctags [--force]" >&2
+    exit 1
+fi
 command -v ctags >/dev/null || { echo "'ctags' program not found" >&2; exit 1; }
 
 # Serialize tags publication even when this helper is run directly.
@@ -16,14 +22,27 @@ flock -n 8 || { echo "another tags build is running in $PWD" >&2; exit 1; }
 jobs=${MYTOOL_CTAGS_JOBS:-}
 if [[ -z $jobs ]]; then
     jobs=$(getconf _NPROCESSORS_ONLN)
-    (( jobs <= 8 )) || jobs=8
+    if (( jobs > 8 )); then
+        jobs=8
+    fi
 fi
-if [[ ! $jobs =~ ^([1-9]|1[0-6])$ ]]; then
-    echo "MYTOOL_CTAGS_JOBS must be an integer from 1 to 16" >&2
-    exit 1
-fi
+case "$jobs" in
+    [1-9]|1[0-6]) ;; # 1..9 or 10..16
+    *)
+        echo "MYTOOL_CTAGS_JOBS must be an integer from 1 to 16" >&2
+        exit 1
+        ;;
+esac
 
 root=$(pwd -P)
+script_dir=$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+[[ -r $script_dir/index_config ]] || {
+    echo "missing configuration: $script_dir/index_config" >&2
+    exit 1
+}
+# shellcheck source=/dev/null
+source "$script_dir/index_config"
+
 # A sibling temporary directory makes the final rename stay on one filesystem.
 # Old tags remain usable until every worker and the final sort have succeeded.
 work=$(mktemp -d ./cscope.ctags.XXXXXX)
@@ -43,68 +62,176 @@ trap 'exit 129' HUP
 
 collect_sources()
 {
-    # Preserve the original extensions and FULL-PATH filters. In particular,
-    # "*test*" differs from mytool's "*/test/*"; the lists are not interchangeable.
-    # Record source bytes for load balancing, not just the length of file names.
-    find "$root" -type f \( -name '*.[chyl]' -o -name '*.cc' \
-        -o -name '*.[ch]pp' -o -name '*.py' -o -name '*.rs' -o -name '*.go' \) \
-        ! -path '*test*' ! -path '*mock/*' ! -path '*mars/*' \
-        ! -path '*aws*' ! -path '*viewer*' -printf '%s\t%p\n' > "$work/sources"
+    local extension excluded
+    local -a suffix_expr=() exclude_expr=()
+
+    for extension in "${INDEX_SOURCE_EXTENSIONS[@]}"; do
+        if ((${#suffix_expr[@]})); then
+            suffix_expr+=(-o)
+        fi
+        suffix_expr+=(-name "*.$extension")
+    done
+    for excluded in "${INDEX_EXCLUDE_PATHS[@]}"; do
+        exclude_expr+=(! -path "$excluded")
+    done
+
+    # Both indexers intentionally use the same extension and test-path lists.
+    # One traversal records size, nanosecond mtime/ctime, device, inode and path.
+    # ctime catches same-size edits even if a caller restores the old mtime.
+    # Sort for a stable comparison independent of find's directory entry order.
+    find "$root" -type f \( "${suffix_expr[@]}" \) \
+        "${exclude_expr[@]}" \
+        -printf '%s\t%T@\t%C@\t%D\t%i\t%p\n' > "$work/metadata"
+    LC_ALL=C sort -nr -k1,1 "$work/metadata" > "$1"
 }
 
-build_tags()
+check_ctags()
 {
-    local version shard pid status=0
-    version=$(ctags --version 2>&1 || :)
-    case "$version" in
-        *Universal*|*Exuberant*)
-            # Greedily assign the largest sources to the least-loaded worker.
-            # At most 16 small counters are needed. Spaces/tabs in paths survive
-            # removal of the first size field; newline file names are unsupported
-            # by the line-based ctags -L interface.
-            : > "$work/input.0"
-            LC_ALL=C sort -nr -k1,1 "$work/sources" |
-                awk -v jobs="$jobs" -v prefix="$work/input." '
-                    {
-                        size = $1
-                        sub(/^[^\t]*\t/, "")
-                        worker = 0
-                        for (i = 1; i < jobs; i++)
-                            if (bytes[i] < bytes[worker])
-                                worker = i
-                        print > (prefix worker)
-                        bytes[worker] += size
-                    }'
+    # Cache dependencies are explicit: default Universal Ctags only. Custom
+    # options may read other files; report unsupported setups instead of guessing.
+    local version
+    version=$(ctags --version)
+    if [[ $version != *Universal* || -n ${CTAGS-} || -n ${ETAGS-} ]]; then
+        echo 'make_ctags requires Universal Ctags without CTAGS/ETAGS options' >&2
+        exit 1
+    fi
+    if ! LC_ALL=C ctags --verbose --list-features > "$work/config" 2>&1; then
+        cat "$work/config" >&2
+        exit 1
+    fi
+    if ! awk '
+        /^Considering option file/ { custom = 1 }
+        /^Reading initial options from / &&
+            $0 != "Reading initial options from command line" { custom = 1 }
+        /^[[:space:]]*Option:/ &&
+            $0 !~ /^[[:space:]]*Option: --list-features$/ { custom = 1 }
+        /^Entering configuration stage: loading command line$/ { complete = 1 }
+        END { exit (custom || !complete) }
+    ' "$work/config"; then
+        echo 'unsupported ctags configuration; use default Universal Ctags' >&2
+        exit 1
+    fi
+}
 
-            # Workers never append to a shared file. Each writes an unsorted
-            # shard; the parent waits for ALL workers before merging anything.
-            for shard in "$work"/input.*; do
-                ctags --kinds-C=+defgmstv --kinds-C++=+cdefgmstuv \
-                    --sort=no -f "$shard.tags" -L "$shard" &
-                pids+=("$!")
-            done
-            for pid in "${pids[@]}"; do
-                wait "$pid" || status=1
-                pids=("${pids[@]:1}")
-            done
-            (( status == 0 )) || return 1
+write_cache_identity()
+{
+    # A policy, parser or worker-count change rebuilds all shards. No source
+    # contents are hashed: the manifest records size, times and file identity.
+    printf '%s\n' ctags-shard-cache-v2 "$root" "$jobs"
+    sha256sum -- "$script_dir/make_ctags" "$script_dir/index_config" "$(command -v ctags)"
+    locale
+    cat "$work/config"
+}
 
-            # One global byte-order sort replaces repeated append/sort cycles.
-            # Deduplicate pseudo headers and advertise the restored sort order
-            # so Vim can use binary search. These flags preserve the old kinds.
-            LC_ALL=C sort --parallel="$jobs" -u "$work"/input.*.tags |
-                sed 's/^!_TAG_FILE_SORTED\t0\t/!_TAG_FILE_SORTED\t1\t/' > "$work/tags"
-            ;;
-        *)
-            # Retain the old serial -dt fallback for non-Exuberant ctags.
-            # NUL-separated xargs handles spaces without requiring -L support.
-            : > "$work/tags"
-            cut -f2- "$work/sources" | tr '\n' '\0' |
-                xargs -0 -r ctags -a -f "$work/tags" -dt
-            LC_ALL=C sort "$work/tags" -o "$work/tags"
-            ;;
-    esac
+tags_stat()
+{
+    stat -L --format='%d %i %s %y %z' tags
+}
+
+prepare_shards()
+{
+    local index
+    local -a old_manifests=()
+    for ((index = 0; index < jobs; index++)); do
+        : > "$work/shard.$index.manifest"
+        if (( cache_valid )); then
+            old_manifests+=("$cache_dir/shard.$index.manifest")
+        fi
+    done
+
+    # Process metadata in one awk, not one shell process per file.
+    # Existing files keep their shard. Only new files (largest first) are
+    # assigned to the lightest shard; deleted files simply leave the manifest.
+    LC_ALL=C awk -F '\t' -v jobs="$jobs" -v prefix="$work/shard." '
+        NF != 6 || $6 == "" {
+            print "invalid manifest (tabs/newlines in source paths are unsupported): " FILENAME > "/dev/stderr"
+            exit 1
+        }
+        FILENAME != ARGV[ARGC - 1] {
+            shard = FILENAME
+            sub(/^.*\/shard\./, "", shard)
+            sub(/\.manifest$/, "", shard)
+            old_shard[$6] = shard + 0
+            next
+        }
+        {
+            path = $6
+            order[++count] = path
+            record[path] = $0
+            size[path] = $1
+            if (path in old_shard) {
+                assigned[path] = old_shard[path]
+                bytes[assigned[path]] += $1
+            }
+        }
+        END {
+            for (n = 1; n <= count; n++) {
+                path = order[n]
+                if (!(path in assigned)) {
+                    shard = 0
+                    for (i = 1; i < jobs; i++)
+                        if (bytes[i] < bytes[shard])
+                            shard = i
+                    assigned[path] = shard
+                    bytes[shard] += size[path]
+                }
+                print record[path] > (prefix assigned[path] ".manifest")
+            }
+        }
+    ' "${old_manifests[@]}" "$work/before.manifest"
+
+    changed=()
+    tag_files=()
+    for ((index = 0; index < jobs; index++)); do
+        if (( cache_valid )) &&
+            cmp -s "$work/shard.$index.manifest" "$cache_dir/shard.$index.manifest"; then
+            tag_files+=("$cache_dir/shard.$index.tags")
+        else
+            changed+=("$index")
+            tag_files+=("$work/shard.$index.tags")
+        fi
+    done
+}
+
+build_shards()
+{
+    local index pid status=0
+    # Launch ctags directly so cleanup tracks the parser, not a wrapper shell.
+    for index in "${changed[@]}"; do
+        cut -f6- "$work/shard.$index.manifest" > "$work/shard.$index.input"
+        ctags --kinds-C=+defgmstv --kinds-C++=+cdefgmstuv \
+            --sort=no -f "$work/shard.$index.tags" -L "$work/shard.$index.input" &
+        pids+=("$!")
+    done
+    for pid in "${pids[@]}"; do
+        wait "$pid" || status=1
+        pids=("${pids[@]:1}")
+    done
+    if (( status )); then
+        echo 'ctags worker failed; previous tags and cache retained' >&2
+        exit 1
+    fi
+
+    # Merge both cached and rebuilt shards. Never append into the live tags.
+    LC_ALL=C sort --parallel="$jobs" -u "${tag_files[@]}" |
+        sed 's/^!_TAG_FILE_SORTED\t0\t/!_TAG_FILE_SORTED\t1\t/' > "$work/tags"
+}
+
+publish_cache()
+{
+    local index
+    # The identity is the commit marker, written LAST. An interrupted publication
+    # leaves it absent, so the next invocation rebuilds instead of mixing states.
+    mkdir -p -- "$cache_dir"
+    rm -f -- "$cache_dir/identity"
+    for index in "${changed[@]}"; do
+        mv -fT -- "$work/shard.$index.manifest" "$cache_dir/shard.$index.manifest"
+        mv -fT -- "$work/shard.$index.tags" "$cache_dir/shard.$index.tags"
+    done
     mv -fT -- "$work/tags" tags
+    mv -fT -- "$work/before.manifest" "$cache_dir/manifest"
+    tags_stat > "$cache_dir/tags.stat"
+    mv -fT -- "$work/identity" "$cache_dir/identity"
 }
 
 update_tag_links()
@@ -113,7 +240,8 @@ update_tag_links()
     # Skip metadata, demo data, and both builders' private work directories.
     # Materialize the directory list first so a failed find stops visibly.
     find . \( -name .git -o -name CVS -o -path "$work" \
-        -o -name 'cscope.build.*' -o -path './gpAux/gpdemo' \) -prune -o \
+        -o -name 'cscope.build.*' -o -name 'cscope.ctags.cache' \
+        -o -path './gpAux/gpdemo' \) -prune -o \
         -type d -print0 > "$work/directories"
 
     # Remove stale links left by older versions, but preserve ordinary files
@@ -156,6 +284,59 @@ update_tag_links()
     done < "$work/directories"
 }
 
-collect_sources
-build_tags
+cache_dir=cscope.ctags.cache
+if [[ -f $cache_dir ]]; then
+    # One-time migration from the previous, single-file metadata cache.
+    rm -- "$cache_dir"
+fi
+check_ctags
+write_cache_identity > "$work/identity"
+collect_sources "$work/before.manifest"
+
+cache_valid=0
+if (( ! force )) && [[ -f $cache_dir/identity ]] &&
+    cmp -s "$work/identity" "$cache_dir/identity"; then
+    cache_valid=1
+    # Missing files are a broken cache, not an empty source tree.
+    for cached_file in manifest tags.stat; do
+        [[ -f $cache_dir/$cached_file ]] || {
+            echo "incomplete cache: $cached_file; rerun with --force" >&2
+            exit 1
+        }
+    done
+    for ((index = 0; index < jobs; index++)); do
+        [[ -f $cache_dir/shard.$index.manifest && -f $cache_dir/shard.$index.tags ]] || {
+            echo "incomplete cache: shard $index; rerun with --force" >&2
+            exit 1
+        }
+    done
+fi
+
+# No source changes: skip even the shard assignment and global merge.
+if (( cache_valid )) && [[ -f tags ]]; then
+    tags_stat > "$work/tags.stat"
+    if cmp -s "$work/before.manifest" "$cache_dir/manifest" &&
+        cmp -s "$work/tags.stat" "$cache_dir/tags.stat"; then
+        echo "ctags: cache hit ($jobs shards)"
+        update_tag_links
+        exit 0
+    fi
+fi
+
+prepare_shards
+echo "ctags: rebuild ${#changed[@]}/$jobs shards"
+build_shards
+
+# Concurrent edits are an error: keep the last usable tags/cache and ask for a
+# rerun instead of reporting success for a mixture of source revisions.
+collect_sources "$work/after.manifest"
+check_ctags
+write_cache_identity > "$work/after.identity"
+if ! cmp -s "$work/before.manifest" "$work/after.manifest" ||
+    ! cmp -s "$work/identity" "$work/after.identity"; then
+    echo 'inputs changed during build; previous tags/cache retained; rerun buildidx' >&2
+    exit 1
+fi
+publish_cache
+# Links can change independently of source metadata, including on a cache hit.
 update_tag_links
