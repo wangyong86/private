@@ -15,9 +15,6 @@ COPY nvim/options.lua /home/wy/.config/nvim/lua/config/
 COPY nvim/basic.lua /home/wy/.config/nvim/lua/plugins/
 COPY nvim/init.lua /home/wy/.config/nvim/
 
-
-#RUN sudo dnf search geos-devel
-
 COPY install_dev_from_git.sh /install_dev_from_git.sh
 RUN sh /install_dev_from_git.sh
 
