@@ -36,14 +36,15 @@ fi
 #create demo-cluster simple
 # MASTER_DATAIDR=xxx mytool -d -t
 baseport=5658
-segnum=3
+segnum=8
 if [ "$1" == "-d" ]; then
     cd $GPSRC
 	if [ $# -eq 2 ]; then
 
 		# regression test mode: 3 segment, 3 mirror
 		if [ "$2" == "-t" ]; then
-    		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=$segnum
+    		make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=$segnum WITH_MIRRORS=false
+    		#make create-demo-cluster PORT_BASE=$baseport NUM_PRIMARY_MIRROR_PAIRS=$segnum
 		elif [ "$2" == "-f" ]; then  #fast mode
     		make create-demo-cluster PORT_BASE=$baseport WITH_MIRRORS=false
 		else
@@ -107,7 +108,10 @@ fi
 OLDGPHOME=$GPHOME
 if [ "$1" == "-c" ]; then
 	#cloudnative develope mode
-	CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-perl --with-python --enable-debug --enable-cassert --enable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --with-openssl --prefix=$OLDGPHOME
+	#CFLAGS='-O0 -g3' CXXFLAGS='-O0 -g3' ./configure --with-perl --with-python --enable-debug --enable-cassert --enable-orca --disable-gpcloud --with-zstd --enable-gpfdist --enable-depend --with-openssl --prefix=$OLDGPHOME
+	#CFLAGS='-O3 -g3' CXXFLAGS='-O3 -g3' ./configure --with-lz4 --with-zstd --with-libxml --with-openssl --with-perl --with-python --prefix=/opt/pgsql
+	#CFLAGS='-O0 -g2' CXXFLAGS='-O0 -g3' ./configure --with-lz4 --with-zstd --with-libxml --enable-depend --with-openssl --with-perl --with-python --disable-awssdk --prefix=/opt/pgsql
+	CFLAGS='-O3 -g2 -Wno-uninitialized -Wno-maybe-uninitialized' CXXFLAGS='-O3 -g2' ./configure --with-lz4 --with-zstd --with-libxml --enable-depend --with-openssl --with-perl --with-python --disable-awssdk --prefix=/opt/pgsql
 
 	#gp 9.4.26
 	# disable-assert to workround orca wrapper termindate asssert fail

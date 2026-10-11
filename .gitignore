@@ -3,5 +3,7 @@
 *.log
 a.out
 temp
+tags
+cscope.*
 
 # tool dir
