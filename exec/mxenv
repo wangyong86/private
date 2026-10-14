@@ -116,7 +116,7 @@ EOF
 
 configure_workspace()
 {
-	local flags='-O3 -g2'
+	local flags='-O3 -g2 -Wno-uninitialized -Wno-maybe-uninitialized'
 	if [[ "${DEBUG_MODE}" == true ]]; then
 		flags='-O0 -g2'
 	fi
