@@ -1,0 +1,4 @@
+interface:
+  display_name: "MatrixDB Code Development"
+  short_description: "Implement MatrixDB code using local conventions"
+  default_prompt: "Use $matrixdb-code-development to write or change pg, mars2x, or mxvector code with local conventions, reuse, self-check, and the commit-message skill."
