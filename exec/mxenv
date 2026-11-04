@@ -117,16 +117,16 @@ EOF
 configure_workspace()
 {
 	local flags='-O3 -g2 -Wno-uninitialized -Wno-maybe-uninitialized'
+	local options='--with-lz4 --with-zstd --with-libxml --enable-depend --with-openssl --with-perl --with-python --disable-awssdk'
 	if [[ "${DEBUG_MODE}" == true ]]; then
 		flags='-O0 -g2'
+		options=$options' --enable-debug --enable-cassert'
 	fi
 
 	(
 		cd "${WORKSPACE}"
 		CFLAGS="${flags}" CXXFLAGS="${flags}" \
-			"${SOURCE}/configure" \
-			--with-lz4 --with-zstd --with-libxml --enable-depend \
-			--with-openssl --with-perl --with-python --disable-awssdk \
+			"${SOURCE}/configure" $options \
 			--prefix="${GPHOME}"
 	)
 }
