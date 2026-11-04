@@ -5,3 +5,6 @@
 INDEX_SOURCE_EXTENSIONS=(c h y l rs cpp cc go hpp py)
 # Match a directory named test; keep test_case.c, tests/ and unittest/.
 INDEX_EXCLUDE_PATHS=('*/test/*')
+# Directories that never receive a tags symlink. A name matches any directory
+# with that basename; a path matches that relative directory only.
+INDEX_TAG_LINK_EXCLUDE=(.git CVS 'cscope.build.*' cscope.ctags.cache gpAux/gpdemo pg_tblspc)

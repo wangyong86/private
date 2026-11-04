@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build tags for the current tree. Demo data directories never receive links.
+# Build tags for the current tree. Link exclusions come from index_config.
 # Requires Bash and GNU find/sort, as used by the Linux development machines.
 set -euo pipefail
 
@@ -236,24 +236,50 @@ publish_cache()
 
 update_tag_links()
 {
-    local directory link relative remainder
-    # Skip metadata, demo data, and both builders' private work directories.
+    local directory excluded link pruned relative remainder
+    local -a prune_expr=()
+
+    # Skip configured directories and this run's private work directory.
+    # A name matches any basename; a path matches that relative directory only.
     # Materialize the directory list first so a failed find stops visibly.
-    find . \( -name .git -o -name CVS -o -path "$work" \
-        -o -name 'cscope.build.*' -o -name 'cscope.ctags.cache' \
-        -o -path './gpAux/gpdemo' \) -prune -o \
+    for excluded in "${INDEX_TAG_LINK_EXCLUDE[@]}"; do
+        if ((${#prune_expr[@]})); then
+            prune_expr+=(-o)
+        fi
+        if [[ $excluded == */* ]]; then
+            prune_expr+=(-path "./$excluded")
+        else
+            prune_expr+=(-name "$excluded")
+        fi
+    done
+    if ((${#prune_expr[@]})); then
+        prune_expr+=(-o)
+    fi
+    prune_expr+=(-path "$work")
+    find . \( "${prune_expr[@]}" \) -prune -o \
         -type d -print0 > "$work/directories"
 
     # Remove stale links left by older versions, but preserve ordinary files
     # named tags and anything that does not point to this tree's tags file.
-    if [[ -d gpAux/gpdemo ]]; then
-        find gpAux/gpdemo -type l -name tags -print0 > "$work/demo-links"
-        while IFS= read -r -d '' link; do
-            if [[ $link -ef tags ]]; then
-                rm -- "$link"
+    : > "$work/pruned-dirs"
+    for excluded in "${INDEX_TAG_LINK_EXCLUDE[@]}"; do
+        if [[ $excluded == */* ]]; then
+            if [[ -d $excluded ]]; then
+                printf '%s\0' "$excluded" >> "$work/pruned-dirs"
             fi
-        done < "$work/demo-links"
-    fi
+        else
+            find . -name "$excluded" -type d -print0 >> "$work/pruned-dirs"
+        fi
+    done
+    : > "$work/stale-links"
+    while IFS= read -r -d '' pruned; do
+        find "$pruned" -type l -name tags -print0 >> "$work/stale-links"
+    done < "$work/pruned-dirs"
+    while IFS= read -r -d '' link; do
+        if [[ $link -ef tags ]]; then
+            rm -- "$link"
+        fi
+    done < "$work/stale-links"
 
     while IFS= read -r -d '' directory; do
         [[ $directory != . ]] || continue

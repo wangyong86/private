@@ -14,9 +14,8 @@ usage()
 usage: buildidx [--force] [--jobs N] [SOURCE_DIR]
 
 Build cscope and ctags indexes for SOURCE_DIR (default: current directory).
-The gpAux/gpdemo directory is never populated with tags links.
 Ctags rebuilds only changed shards; cscope uses its native incremental update.
-Requires default Universal Ctags. Shared source rules: index_config.
+Requires default Universal Ctags. Shared source and tag-link rules: index_config.
 
 Options:
   -j, --jobs N  Ctags workers, 1 through 16 (default: CPUs, capped at 8)
