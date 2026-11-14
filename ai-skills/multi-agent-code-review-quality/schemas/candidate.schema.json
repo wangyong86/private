@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "candidate.schema.json",
+  "title": "Local review candidate output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reviewer", "candidates", "coverage_notes"],
+  "properties": {
+    "reviewer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/candidate"
+      }
+    },
+    "coverage_notes": {
+      "$ref": "#/$defs/coverageNotes"
+    }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "anchor_kind",
+        "anchor_evidence",
+        "category",
+        "subcategory",
+        "file",
+        "line",
+        "message",
+        "trigger",
+        "evidence",
+        "fix",
+        "introduced_by",
+        "pr_effect",
+        "base_evidence",
+        "head_evidence",
+        "authority",
+        "consumer_paths",
+        "activation_proof",
+        "performance_basis",
+        "benchmark_status",
+        "benchmark_evidence",
+        "correctness_impact",
+        "performance_impact",
+        "external_comment_refs",
+        "disposition",
+        "fix_code_blocks"
+      ],
+      "properties": {
+        "severity": {
+          "enum": ["blocking", "important", "suggestion", "nit"]
+        },
+        "anchor_kind": {
+          "enum": ["added", "modified", "deleted", "omission"]
+        },
+        "anchor_evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "enum": [
+            "logic",
+            "maintainability",
+            "performance",
+            "testing",
+            "compatibility",
+            "security",
+            "other"
+          ]
+        },
+        "subcategory": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "introduced_by": {
+          "enum": [
+            "pr",
+            "pre-existing",
+            "changed-but-pre-existing",
+            "uncertain"
+          ]
+        },
+        "pr_effect": {
+          "enum": [
+            "introduced",
+            "expanded-trigger",
+            "worsened-outcome",
+            "removed-mitigation",
+            "none",
+            "uncertain"
+          ]
+        },
+        "base_evidence": {
+          "type": "string"
+        },
+        "head_evidence": {
+          "type": "string"
+        },
+        "authority": {
+          "type": "string"
+        },
+        "consumer_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "activation_proof": {
+          "type": "string"
+        },
+        "performance_basis": {
+          "enum": ["measured", "inferred", "none"]
+        },
+        "benchmark_status": {
+          "enum": ["run", "not-run", "not-applicable"]
+        },
+        "benchmark_evidence": {
+          "type": ["string", "null"]
+        },
+        "correctness_impact": {
+          "enum": ["none", "possible", "confirmed"]
+        },
+        "performance_impact": {
+          "enum": ["none", "possible", "confirmed"]
+        },
+        "external_comment_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalComment"
+          }
+        },
+        "disposition": {
+          "enum": [
+            "candidate",
+            "follow-up",
+            "dismissed",
+            "merged",
+            "unresolved"
+          ]
+        },
+        "fix_code_blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixBlock"
+          }
+        }
+      }
+    },
+    "externalComment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "comment_id",
+        "author",
+        "created_at",
+        "reviewed_commit",
+        "disposition"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "comment_id": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "reviewed_commit": {
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "candidate",
+            "follow-up",
+            "dismissed",
+            "merged",
+            "unresolved"
+          ]
+        }
+      }
+    },
+    "fixBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "language",
+        "operation",
+        "original_code",
+        "code"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "enum": [
+            "replace",
+            "insert_before",
+            "insert_after",
+            "delete",
+            "create"
+          ]
+        },
+        "base_start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "base_end_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "original_code": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "create"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "original_code": {
+                "const": ""
+              }
+            }
+          },
+          "else": {
+            "required": ["base_start_line", "base_end_line"]
+          }
+        }
+      ]
+    },
+    "coverageNotes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files_reviewed",
+        "risk_areas_checked",
+        "dropped_candidates",
+        "confidence_limits"
+      ],
+      "properties": {
+        "files_reviewed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "risk_areas_checked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dropped_candidates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confidence_limits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

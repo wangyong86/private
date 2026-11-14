@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "review.schema.json",
+  "title": "Local code review report",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "meta",
+    "decision",
+    "summary",
+    "findings",
+    "praise",
+    "open_questions",
+    "review_followup",
+    "dismissed_findings"
+  ],
+  "properties": {
+    "meta": {
+      "$ref": "#/$defs/meta"
+    },
+    "decision": {
+      "enum": [
+        "REQUEST_CHANGES",
+        "APPROVE_WITH_COMMENTS",
+        "APPROVE"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "praise": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "review_followup": {
+      "$ref": "#/$defs/reviewFollowup"
+    },
+    "dismissed_findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dismissedFinding"
+      }
+    }
+  },
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "repo",
+        "base_branch",
+        "head_branch",
+        "generated_at",
+        "file_count",
+        "profile"
+      ],
+      "properties": {
+        "repo": {
+          "type": "string"
+        },
+        "base_branch": {
+          "type": "string"
+        },
+        "head_branch": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "file_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "profile": {
+          "enum": ["full", "light", "diverse"]
+        }
+      }
+    },
+    "fixBlock": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "file",
+        "language",
+        "operation",
+        "original_code",
+        "code"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "enum": [
+            "replace",
+            "insert_before",
+            "insert_after",
+            "delete",
+            "create"
+          ]
+        },
+        "base_start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "base_end_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "original_code": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "issue_exists",
+        "trigger_probability",
+        "trigger_scenario",
+        "importance"
+      ],
+      "properties": {
+        "issue_exists": {
+          "enum": ["确认存在", "可能存在", "不存在"]
+        },
+        "trigger_probability": {
+          "enum": ["high", "medium", "low"]
+        },
+        "trigger_scenario": {
+          "type": "string"
+        },
+        "importance": {
+          "type": "string"
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "severity",
+        "category",
+        "subcategory",
+        "file",
+        "line",
+        "message",
+        "fix",
+        "fix_code_blocks",
+        "source_agent",
+        "assessment"
+      ],
+      "properties": {
+        "severity": {
+          "enum": ["blocking", "important", "suggestion", "nit"]
+        },
+        "category": {
+          "type": "string"
+        },
+        "subcategory": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "message": {
+          "type": "string"
+        },
+        "fix": {
+          "type": "string"
+        },
+        "fix_code_blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixBlock"
+          }
+        },
+        "source_agent": {
+          "type": "string"
+        },
+        "assessment": {
+          "$ref": "#/$defs/assessment"
+        }
+      }
+    },
+    "dismissedFinding": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/finding"
+        },
+        {
+          "type": "object",
+          "required": ["dismissal_reason"],
+          "properties": {
+            "dismissal_reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fix_code_blocks": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/fixBlock"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "followupItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "severity",
+        "message",
+        "status",
+        "resolution",
+        "evidence"
+      ],
+      "properties": {
+        "review_id": {
+          "type": ["integer", "string"]
+        },
+        "location": {
+          "type": "string"
+        },
+        "current_location": {
+          "type": "string"
+        },
+        "rating": {
+          "type": "string"
+        },
+        "human_comment": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": ["blocking", "important", "suggestion", "nit"]
+        },
+        "message": {
+          "type": "string"
+        },
+        "status": {
+          "enum": ["resolved", "active", "ignored", "dismissed"]
+        },
+        "resolution": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        }
+      }
+    },
+    "reviewFollowup": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "fixed_findings",
+        "ignored_by_feedback",
+        "still_active_findings",
+        "dismissed_this_run"
+      ],
+      "properties": {
+        "fixed_findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/followupItem"
+          }
+        },
+        "ignored_by_feedback": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/followupItem"
+          }
+        },
+        "still_active_findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/followupItem"
+          }
+        },
+        "dismissed_this_run": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/followupItem"
+          }
+        }
+      }
+    }
+  }
+}

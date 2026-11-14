@@ -1,0 +1,4 @@
+interface:
+  display_name: "数据库设计确认"
+  short_description: "分阶段确认数据库设计的范围、框架和接口"
+  default_prompt: "使用 $database-design-confirmation 按范围、框架、接口三个阶段推进这个数据库设计，并整理当前会话中的历史追问。"

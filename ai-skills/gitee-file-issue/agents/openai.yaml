@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gitee File Issue"
+  short_description: "Create Gitee enterprise issues or child work items"
+  default_prompt: "Use $gitee-file-issue to file a Gitee enterprise issue or 子工作项 under the given parent, with an evidence-backed body and large dumps attached rather than inlined."

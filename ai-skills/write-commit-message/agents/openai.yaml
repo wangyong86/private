@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Commit Message"
+  short_description: "Draft accurate repository-style Git commit messages"
+  default_prompt: "Use $write-commit-message to draft an accurate commit message for the exact target change."

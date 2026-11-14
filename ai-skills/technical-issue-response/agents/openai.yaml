@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Issue Response"
+  short_description: "Evidence-based technical issue replies"
+  default_prompt: "Use $technical-issue-response to analyze and draft a technical issue reply."

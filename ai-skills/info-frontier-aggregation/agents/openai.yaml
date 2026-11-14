@@ -1,0 +1,4 @@
+interface:
+  display_name: "Info Frontier Aggregation"
+  short_description: "Collect and synthesize high-signal data-processing trends"
+  default_prompt: "Use $info-frontier-aggregation to refresh the data-processing frontier since the last checkpoint."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Case Analysis"
+  short_description: "Analyze a MatrixDB case by intent, expectation, cause, and action"
+  default_prompt: "Use $case-analysis to analyze this MatrixDB case in order: test intent, expected result, failure cause, and what to do."

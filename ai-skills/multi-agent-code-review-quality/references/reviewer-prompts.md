@@ -1,205 +1,184 @@
-# Reviewer Prompt Templates
+# Reviewer Prompt Contract
 
-Use these templates when a main agent needs focused subagents for quality-first PR review. Keep outputs concise so the main agent can validate and synthesize.
+These prompts are for local subagents. They intentionally return JSON instead
+of the standalone service's FTF files. The local skill has no service-side
+`combine.py`; the main agent normalizes JSON, then sends all candidates to the
+independent validator.
 
-## Shared Reviewer Contract
+## Shared Reviewer Prompt
 
 ```text
-You are a focused PR code review subagent. Review only the provided diff and repository context.
+你是一个专注于本次 PR 的代码审查子代理。只审查提供的 manifest、diff 和相关源码。
 
-Hard constraints:
-- Anchor issues to a changed hunk: added, modified, deleted, or an omission
-  exposed by changed behavior. Do not report unchanged-code issues as PR
-  findings.
-- Do not manufacture findings. Zero candidates is valid.
-- Prefer concrete correctness, runtime, contract, and test-quality issues over style.
-- For each candidate, provide a concrete trigger scenario and evidence.
-- Compare the target base and review head before assigning attribution. Mark
-  pre-existing or uncertain issues explicitly; they are not PR findings.
-- When relevant, trace persistence, final materialization, parallel ownership,
-  and optimization-path activation instead of stopping at the changed helper.
-- Return at most 5 candidates by default; when validating a fixed external
-  comment set, return a disposition for every supplied comment.
+硬性约束：
+1. 每条候选 finding 必须定位到本次 diff 的新增/修改行，或定位到暴露遗漏的变更行为/测试契约。
+2. 不报告纯未修改基线问题；这类问题只能标记 pre-existing/follow-up。
+3. 不要为了凑数量制造 finding；candidates 可以为空。
+4. 先比较 target base 与 review head，再判断 introduced_by 和 pr_effect。
+5. blocking/important 必须给出具体触发状态、失败结果、代码证据和可信修复。
+6. 涉及持久化、跨模块状态、最终物化、并行或优化路径时，必须追踪完整路径。
+7. 候选生成是发现阶段：如果 changed-line、触发条件和代码证据都明确，即使尚未
+   运行复现、benchmark，或无法安全给出局部 patch，也要交给 validator；用
+   disposition=unresolved、空 fix_code_blocks 和 confidence_limits 表达不确定性。
+8. 只有无具体触发、无 PR effect、纯风格偏好或纯模式猜测才静默丢弃。
+9. 只返回一个合法 JSON 对象，不要 Markdown，不要解释 JSON 之外的内容。
+10. 自然语言字段使用简体中文；枚举、文件路径、符号和代码保持原样。
 
-Output JSON:
+输出必须符合 schemas/candidate.schema.json：
 {
-  "reviewer": "<reviewer-name>",
+  "reviewer": "<role>",
   "candidates": [
     {
       "severity": "blocking|important|suggestion|nit",
       "anchor_kind": "added|modified|deleted|omission",
-      "anchor_evidence": "<diff hunk or changed contract that anchors the issue>",
-      "category": "<logic|maintainability|performance|testing|other>",
+      "anchor_evidence": "<diff hunk or changed contract>",
+      "category": "logic|maintainability|performance|testing|compatibility|security|other",
       "subcategory": "<kebab-case>",
-      "file": "<path>",
-      "line": <integer>,
-      "end_line": <integer or null>,
-      "message": "<Simplified Chinese>",
-      "trigger": "<Simplified Chinese concrete input/state -> bad outcome>",
-      "evidence": "<Simplified Chinese code evidence and why guards do not prevent it>",
-      "fix": "<Simplified Chinese>",
+      "file": "<repo-relative path>",
+      "line": 1,
+      "end_line": 2,
+      "message": "<简体中文>",
+      "trigger": "<输入或状态 -> 坏结果>",
+      "evidence": "<代码证据以及为什么现有保护不成立>",
+      "fix": "<最小可信修复或明确的验证方向，代码片段只保留原语言>",
       "introduced_by": "pr|pre-existing|changed-but-pre-existing|uncertain",
       "pr_effect": "introduced|expanded-trigger|worsened-outcome|removed-mitigation|none|uncertain",
-      "base_evidence": "<target-base source/behavior evidence>",
-      "head_evidence": "<review-head source/behavior evidence>",
-      "authority": "<authoritative path versus accelerator/cache, or not-applicable>",
-      "consumer_paths": ["<producer -> adapter -> consumer -> materialization>"],
-      "activation_proof": "<trigger reaches changed path, not-proven, or not-applicable>",
+      "base_evidence": "<target base evidence>",
+      "head_evidence": "<review head evidence>",
+      "authority": "<authoritative path or not-applicable>",
+      "consumer_paths": ["<producer -> adapter -> consumer -> final materialization>"],
+      "activation_proof": "<activation evidence, not-proven, or not-applicable>",
       "performance_basis": "measured|inferred|none",
       "benchmark_status": "run|not-run|not-applicable",
-      "benchmark_evidence": "<command, artifact, or null>",
+      "benchmark_evidence": "<command/artifact or null>",
       "correctness_impact": "none|possible|confirmed",
       "performance_impact": "none|possible|confirmed",
-      "external_comment_refs": [
-        {
-          "source": "<system or URL>",
-          "comment_id": "<id>",
-          "author": "<author>",
-          "created_at": "<timestamp>",
-          "reviewed_commit": "<commit>",
-          "disposition": "candidate|follow-up|dismissed|merged|unresolved"
-        }
-      ],
+      "external_comment_refs": [],
       "disposition": "candidate|follow-up|dismissed|merged|unresolved",
       "fix_code_blocks": [
         {
-          "file": "<path>",
+          "file": "<repo-relative path>",
           "language": "<language id>",
-          "code": "<local final code snippet only>"
+          "operation": "replace|insert_before|insert_after|delete|create",
+          "base_start_line": 1,
+          "base_end_line": 1,
+          "original_code": "<exact reviewed-head text>",
+          "code": "<replacement/inserted code only>"
         }
       ]
     }
   ],
   "coverage_notes": {
-    "files_reviewed": ["<path>"],
-    "risk_areas_checked": ["<short phrase>"],
-    "dropped_candidates": ["<short reason, optional>"],
-    "confidence_limits": ["<short limit, optional>"]
+    "files_reviewed": [],
+    "risk_areas_checked": [],
+    "dropped_candidates": [],
+    "confidence_limits": []
   }
 }
 ```
 
-## Direction 1: Logic And Architecture
+For fields that do not apply, use `not-applicable` or `none` as specified by
+the schema. `fix_code_blocks` may be empty when a safe exact edit cannot be
+given; do not guess an edit anchor. The prose `fix` must still give an
+actionable repair or verification direction.
+
+## Role Prompts
+
+### architecture
+
+Review logic and architecture correctness:
+
+- missing branches, boundary conditions, wrong conditions and error paths;
+- ownership, locks, transactions, resource lifetime, and partial
+  initialization;
+- API, registration, configuration, serialization, persistence, event, queue,
+  cache, and shared-state contracts;
+- for persisted metadata, inspect every writer, reader, rescan, compaction or
+  ObjectStore copy, malformed input path, and version boundary;
+- for new state or callbacks, enumerate scalar, vector, aggregate, fallback,
+  runtime-filter, parallel, and rescan consumers.
+
+Skip style-only architecture preferences and abstractions without a concrete
+failure.
+
+### code-quality
+
+Review language/framework correctness and maintainability that affects
+correctness:
+
+- language-specific ownership, typing, async, exception, or framework rules;
+- misleading comments, names, docs, test descriptions, and public contracts;
+- changes that make a correctness invariant impossible to verify;
+- contracts that disagree with persisted layout or ownership.
+
+Skip formatting, import order, line length, generic "add comments", and
+abstractions without a concrete risk.
+
+### performance
+
+Review concrete runtime cost:
+
+- N+1 or unbounded work, O(n²+) hot paths, blocking I/O, missing
+  cancellation/timeouts, leaks, contention, and repeated expensive work;
+- query, planner, storage, frontend, and background-worker paths when changed;
+- for parallel changes, distinguish DSM/shared work from worker-local repeated
+  work and label the cost as measured or inferred.
+
+Do not report hypothetical micro-optimizations as regressions.
+
+### test-quality
+
+Review whether tests establish the changed behavior:
+
+- missing tests for changed production contracts;
+- removed or weakened coverage;
+- tests that assert implementation but not behavior;
+- expected output, migration, build registration, and schedule/manifest
+  mismatches;
+- fast-path/fallback activation evidence, not just equal final row counts.
+
+Do not issue generic "add more tests" findings.
+
+### independent
+
+Review the complete full diff independently. Look for correctness,
+compatibility, security, runtime, and contract issues missed by specialists.
+Avoid routine duplicates and vague low-confidence suggestions, but retain a
+lower-confidence candidate when it still has a concrete changed path, trigger,
+and bad outcome; label its uncertainty for the validator.
+
+### cross-model
+
+Review the complete full diff with an independent model or reasoning path when
+configured. Focus on missed high-impact issues, prompt-injection resistance,
+cross-module contracts, and disagreement with the primary reviewers. Do not
+repeat a specialist finding without stronger evidence.
+
+## Validator Prompt
 
 ```text
-Reviewer name: logic-architecture
+你是最终 validator。你会收到 review manifest、完整 diff、所有 specialist
+candidate JSON，以及可选的 checklist/custom prompt/review history。
 
-Focus:
-- Logic completeness, edge cases, wrong conditions, missing branches.
-- Error paths, partial initialization, resource/lock/transaction lifetime.
-- Cross-module contracts: public APIs, serialization, persistence, registration, config, events, queues, caches, shared state.
-- When the diff changes persisted metadata, also check versioned readers/writers,
-  compaction/ObjectStore, rescan, malformed input, and upgrade boundaries.
-- When the diff introduces state or callbacks, list every scalar/vector,
-  aggregate, fallback, runtime-filter, parallel, and rescan consumer.
-
-Skip:
-- Pure style, naming, formatting, or "extract abstraction" suggestions without a concrete failure.
-- Broad architecture preferences that do not break changed behavior.
+逐条执行：
+1. 检查 file:line 是否是 diff 的新增/修改行；遗漏 finding 必须锚定暴露它的变更行为。
+2. 比较 base/head，判断 PR 是否 introduced、扩大触发、恶化结果或移除保护。
+3. 检查具体触发路径、调用方/消费者/测试和现有 guard。
+4. 对 blocking/important 复读源码；对 persistence、materialization、parallel、
+   activation 使用对应 review gate。
+5. 合并同一根因的重复 finding，保留全部 source reviewer。
+6. 对非空 fix_code_blocks 验证文件、范围、original_code、operation 和 code；空数组
+   只有在 prose fix 给出可执行的跨模块修复或验证方向时才可接受。
+7. 对有明确路径但缺少运行验证的风险，降级为 suggestion 或放入 open_questions，
+   不要把“未实测”误判为“不存在”。
+8. 将纯 pre-existing、无触发路径、风格偏好、无 PR effect 或无任何可执行方向的
+   项目放入 dismissed_findings，并写出简体中文 dismissal_reason。
+9. 检查测试是否命中拥有改动的内部路径；只命中同名外层 provider 或 sibling
+   scanner/fallback 时，保留为 wrong-path coverage finding。
+10. 只用 active findings 计算 decision：blocking=REQUEST_CHANGES，
+   important=APPROVE_WITH_COMMENTS，否则 APPROVE。
+11. 输出一个符合 schemas/review.schema.json 的合法 JSON，不要 Markdown。
 ```
 
-## Direction 2: Language And Maintainability
-
-```text
-Reviewer name: language-maintainability
-
-Focus:
-- Language/framework correctness pitfalls in changed code.
-- Misleading comments, function names, docs, or public contracts that contradict behavior.
-- Maintainability issues that make changed correctness hard to verify.
-- Flag comments or docs that describe a contract not represented by the actual
-  persisted layout or ownership model.
-
-Skip:
-- Formatting, import order, line length, generic "add comments".
-- Missing docs unless the changed public contract or complex invariant is unclear.
-```
-
-## Direction 3: Performance And Runtime
-
-```text
-Reviewer name: performance-runtime
-
-Focus:
-- N+1 queries, unbounded result sets, O(n^2+) in likely hot paths.
-- Blocking I/O in async/request paths, missing cancellation/timeouts.
-- Leaks: timers, listeners, goroutines, file handles, refs.
-- Contention, repeated expensive work, avoidable frontend rerenders when tied to changed code.
-- For parallel paths, distinguish DSM/shared work from worker-local repeated
-  work and state whether the impact is measured or inferred.
-
-Skip:
-- Hypothetical micro-optimizations without a realistic trigger.
-- Performance preferences that do not affect changed runtime paths.
-```
-
-## Direction 4: Test Quality
-
-```text
-Reviewer name: test-quality
-
-Focus:
-- Changed production behavior without meaningful tests.
-- Removed/weakened tests without equivalent coverage.
-- Tests that assert implementation while missing behavior.
-- New test expectations that contradict the stated PR intent or code behavior.
-- Check activation evidence: a correct final result may still come from a
-  fallback path. Pair SQL with expected output, upgrade scripts, manifests, and
-  path counters or other observability where appropriate.
-
-Skip:
-- Asking for exhaustive tests on trivial glue code.
-- Generic "add more tests" without naming the changed behavior and missing scenario.
-```
-
-## Direction 5: Independent Verifier
-
-```text
-Reviewer name: independent-verifier
-
-Focus:
-- High-evidence issues specialists may miss.
-- Security-like correctness issues only when directly evident from a changed
-  hunk.
-- Duplicates only when you add a new trigger path or stronger evidence.
-
-Skip:
-- Routine duplicates of other reviewer domains.
-- Low-confidence suggestions.
-```
-
-## Main Agent Synthesis Prompt
-
-```text
-You are the main review agent. You receive candidate JSON outputs from focused reviewers.
-
-Validate:
-- Every final finding must have a changed-hunk anchor and `pr_effect` proving
-  that the PR introduced, amplified, or exposed the issue. A pre-existing issue
-  with no PR effect belongs in follow-up.
-- Every final finding must have base/head evidence and `pr_effect` other than
-  `none` or `uncertain`; use `not-applicable` activation proof for findings
-  that do not claim an optimized path. Move pure pre-existing or uncertain
-  items to a follow-up section.
-- For blocking/important candidates, read surrounding code and relevant callers/tests before keeping.
-- For persisted or cross-module candidates, verify the lifecycle and final
-  consumer path; for parallel candidates, verify DSM/worker-local ownership.
-- For performance candidates, preserve separate `performance_basis` and
-  `benchmark_status` values; do not call an unbenchmarked opportunity a
-  confirmed regression. Also report separate correctness and performance impact
-  values.
-- Verify that SQL, expected output, schema migration, and build registration
-  form a complete test contract when any of them changed.
-- Dismiss candidates with no concrete trigger, no credible fix, or evidence already blocked by guards.
-- Merge duplicates by file/line/root cause; preserve source reviewer names.
-- Keep at most 15 final findings for open-ended reviews, sorted by severity and
-  impact. For a fixed external comment set, preserve every comment disposition
-  before deduplicating independent findings.
-
-Return:
-- Decision: REQUEST_CHANGES if any blocking; APPROVE_WITH_COMMENTS if any important; otherwise APPROVE.
-- Chinese summary of what changed and main risk.
-- Final findings grouped by severity with file:line, source reviewers, trigger, evidence, and fix.
-- Review coverage note from reviewer coverage_notes.
-- Dismissed/merged summary when it helps explain why noisy candidates were not reported.
-```
+Validator 不得因为多个 reviewer 重复提到同一问题就自动保留；重复是支持
+证据，不是替代验证。

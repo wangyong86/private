@@ -1,52 +1,22 @@
 # Review Gates
 
-Read this reference when a review crosses versioned storage, multiple
-producer/consumer modules, parallel execution, or an optimization path whose
-activation is not obvious from the final result.
+These gates are the review core that must survive conversion from the
+standalone service. They are semantic gates, not deployment requirements.
 
-## Candidate Evidence
+## Changed-Hunk Attribution
 
-Every candidate uses this additional evidence model:
+1. Identify the exact changed hunk and its caller or consumer.
+2. Read the target-base version with `git show <base>:<path>`.
+3. Compare trigger, guard, and outcome in base and head.
+4. Record the smallest evidence proving the PR effect.
 
-```text
-introduced_by: pr | pre-existing | changed-but-pre-existing | uncertain
-pr_effect: introduced | expanded-trigger | worsened-outcome | removed-mitigation | none | uncertain
-anchor_kind: added | modified | deleted | omission
-anchor_evidence: diff hunk or changed contract that anchors the issue
-base_evidence: exact behavior or source evidence at the target base
-head_evidence: exact changed behavior or source evidence at the review head
-authority: authoritative data/check versus lossy accelerator or cache; use
-           `not-applicable` for findings without an authority distinction
-consumer_paths: producer -> adapter -> consumer -> final materialization
-activation_proof: how the trigger reaches the changed path; state "not-proven"
-                  when a test only checks an equivalent final result; use
-                  `not-applicable` when no optimized path is claimed
-performance_basis: measured | inferred | none
-benchmark_status: run | not-run | not-applicable
-benchmark_evidence: command, artifact, or null
-correctness_impact: none | possible | confirmed
-performance_impact: none | possible | confirmed
-```
+Do not use a changed file, shifted line number, new comment, or PR description
+as proof that the underlying defect was introduced. Pure pre-existing issues
+are follow-ups.
 
-Use `pre-existing` when the same defect is present in the base and the PR does
-not change the relevant behavior. Use `changed-but-pre-existing` when the PR
-touches the area but does not introduce the root cause; it may still be a PR
-finding when `pr_effect` is `expanded-trigger`, `worsened-outcome`, or
-`removed-mitigation`. Only `pr_effect=none` belongs exclusively in follow-up.
+## Persisted Format
 
-## Baseline Attribution
-
-1. Identify the exact changed hunk and the relevant caller or consumer.
-2. Read the base version with `git show <base>:<path>`.
-3. Compare the trigger, guard, and outcome in base and head.
-4. Record the smallest evidence that proves introduction or pre-existence.
-
-Do not use a shifted line number, a changed file, or a new comment as proof that
-the underlying code changed.
-
-## Persisted-Format Gate
-
-When a diff changes a format or metadata path, inspect the complete lifecycle:
+For metadata or format changes, inspect:
 
 ```text
 writer -> persisted layout -> reader -> rescan
@@ -56,10 +26,10 @@ writer -> persisted layout -> reader -> rescan
 ```
 
 Check field widths against configuration limits, optional-section publication,
-legacy readers, and all writers. A new reader path is not compatible merely
-because fresh indexes can be built.
+all writers, legacy readers, and upgrade behavior. Fresh-index success is not
+compatibility evidence.
 
-## Consumer and Materialization Gate
+## Consumer and Materialization
 
 For new state, callbacks, projection flags, or late materialization, enumerate
 the paths separately:
@@ -72,79 +42,82 @@ the paths separately:
 - parallel worker path;
 - rescan/reuse path.
 
-Trace each path to the point where the final values are read. A producer-side
-flag or a successful first fetch does not prove that every consumer completed
-the required materialization.
+Trace every path to final materialization. A producer-side flag or successful
+first fetch does not prove that all consumers materialize the required values.
 
-## Parallel Ownership Gate
+## Parallel Ownership
 
-For parallel changes, state explicitly:
+For parallel changes, state:
 
 - what is in DSM and what remains worker-local;
 - how workers claim pages, ranges, or runs;
 - whether navigation metadata is shared, recomputed, or intentionally repeated;
-- how empty ownership, worker abort, rescan, and reader reuse behave;
-- whether the behavior is a correctness property or only a performance tradeoff.
+- how empty ownership, abort, rescan, and reader reuse behave;
+- whether the issue is correctness or only a measured/inferred cost.
 
-Do not call worker-local repeated metadata work a bug without a concrete bad
-outcome or measured regression.
+Worker-local repeated metadata work is not automatically a correctness bug.
 
-## Activation and Test-Artifact Gate
+## Optimization Activation
 
-For every optimization or fallback test, identify the input/state that enters
-the target branch. Final row counts alone are insufficient when both the fast
-path and the authoritative fallback return the same rows. Use a path counter,
-debug statistic, assertion, explain evidence, fault injection, or another
-observable activation signal when needed.
+For an accelerator or fallback test, identify the input/state that enters the
+target branch. Equal final rows are insufficient when both fast and fallback
+paths return the same result. Prefer a path counter, assertion, debug statistic,
+fault injection, explain/runtime evidence, or another observable signal.
 
-Review SQL, expected `.out`, schema upgrade scripts, schedule/manifest files,
-and build registration together. Fresh-install coverage does not imply upgrade
+Review SQL, expected output, migration scripts, build registration, and
+schedule/manifest together. Fresh-install coverage does not imply upgrade
 coverage.
 
-## Performance Evidence Gate
+## Performance Evidence
 
-Label each performance statement:
+Every performance statement must label:
 
-- `performance_basis=measured`: benchmark or production trace exists;
-- `performance_basis=inferred`: bounded cost is evident from the changed code
-  but no measurement exists;
-- `benchmark_status=not-run`: the relevant benchmark was not executed.
+- `performance_basis=measured` only when a benchmark or production trace exists;
+- `performance_basis=inferred` when bounded cost is evident from code;
+- `benchmark_status=not-run` when the relevant benchmark was not executed.
 
-Also state whether correctness impact is none, possible, or confirmed. Keep
-optimization opportunities separate from blocking correctness or compatibility
-findings.
+State correctness impact and performance impact separately. Do not promote an
+unbenchmarked opportunity to a confirmed regression.
 
-## External Review Provenance
+## External Review History
 
-When reviewing an existing external comment, preserve:
+When an explicit history file is supplied, preserve:
 
 ```text
-source: system and URL or API
-comment_id:
-author:
-created_at:
-reviewed_commit:
-external_comment_refs: list of source, comment_id, author, created_at,
-                       reviewed_commit, and disposition
-disposition: candidate | follow-up | dismissed | merged | unresolved
+source
+comment_id
+author
+created_at
+reviewed_commit
+disposition
 ```
 
-Separate the external reviewer's wording from the main agent's independent
-validation. If the source cannot be fetched, report that limitation instead of
-reconstructing a comment.
+Separate the external wording from independent validation. If history cannot be
+read, report that limitation instead of reconstructing it.
 
-## Reviewer Routing
+## Noise and Severity
 
-Use the smallest set of cross-cutting reviewers that covers the diff:
+- `blocking`: likely production incident, data loss, security issue, crash, or
+  critical behavior failure;
+- `important`: likely bug, serious regression, broken contract, or important
+  missing coverage;
+- `suggestion`: worth fixing without direct merge risk;
+- `nit`: low-cost cleanup, used sparingly.
 
-| Changed area | Required check |
-| --- | --- |
-| metadata, serialization, versions, GUC limits | `persisted-compatibility` |
-| new producer state, callbacks, projection, late materialization | `consumer-materialization` |
-| DSM, shared cursor, worker state, rescan | `parallel-activation` |
-| accelerator, fallback, boundary test, expected output | `parallel-activation` plus `test-quality` |
-| any external review or suspected master defect | `baseline-attribution` |
+Candidate discovery and final publication use different thresholds. Send a
+candidate to validation when it has a changed-hunk anchor, a concrete trigger,
+and code evidence, even if runtime confirmation is pending or the repair spans
+multiple components. The validator may keep it as a downgraded suggestion or
+open question and must label the uncertainty.
 
-Run the ordinary five directions in addition when their risk applies. These
-routes are defaults for coverage, not a mandate to dispatch every specialist
-on a trivial change.
+Dismiss candidates with no concrete trigger, no actionable repair or
+verification direction, no PR effect, or a severity disproportionate to the
+evidence. Do not dismiss solely because no benchmark was run or because a safe
+fix cannot be represented as one local edit.
+
+For test coverage, verify the internal branch that owns the changed behavior.
+An outer plan-node name, equal final rows, or a successful fallback does not
+prove that a changed scanner subtype, rescan lifecycle, materialization stage,
+or accelerator branch executed. A test that demonstrably exercises a sibling
+implementation is a concrete coverage finding, not a generic request for more
+tests.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "MatrixDB Regression Report"
+  short_description: "Summarize MatrixDB regression runs and diffs"
+  default_prompt: "Use $matrixdb-regression-report to inspect this regression URL and summarize the failures and relevant diff hunks for a decision."

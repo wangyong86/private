@@ -1,4 +1,4 @@
 interface:
   display_name: "Multi-Agent Code Review Quality"
-  short_description: "Quality-focused multi-agent review workflow"
-  default_prompt: "Use $multi-agent-code-review-quality to design a quality-focused multi-agent PR review workflow."
+  short_description: "Local multi-agent PR review with evidence validation"
+  default_prompt: "Use $multi-agent-code-review-quality to review this PR with specialist reviewers, an independent validator, changed-line evidence, and a structured Chinese report."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Database Feature Development"
+  short_description: "Guide large database features from scope through delivery"
+  default_prompt: "Use $database-feature-development to drive this database feature from scope confirmation through implementation and verification."

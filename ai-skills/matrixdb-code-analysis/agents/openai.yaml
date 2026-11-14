@@ -1,0 +1,4 @@
+interface:
+  display_name: "MatrixDB Code Analysis"
+  short_description: "Explain existing MatrixDB backend mechanisms from source"
+  default_prompt: "Explain how the requested MatrixDB backend mechanism works, including its design choices, call paths, state/data flow, invariants, and established limitations. Do not diagnose, review, assess risk, or design tests."
